@@ -11,8 +11,14 @@ function init() {
 }
 
 window.addEventListener("keyup", (e) => {
+    console.log(e.code); 
+    
     if (e.code == "Space") {
         keyboard.SPACE = false;
+    }
+
+    if (e.code == "KeyB") {
+        keyboard.B = false;
     }
     
     if (e.code == "ArrowLeft") {
@@ -40,6 +46,10 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("keydown", (e) => {
     if (e.code == "Space") {
         keyboard.SPACE = true;
+    }
+
+    if (e.code == "KeyB") {
+        keyboard.B = true;
     }
     
     if (e.code == "ArrowLeft") {
