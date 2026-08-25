@@ -1,20 +1,32 @@
-class ThrowableObject extends MoveableObject {
+import { ImageHub } from "./img-hub.class.js";
+import { MoveableObject } from "./moveable-object.class.js";
+
+export class ThrowableObject extends MoveableObject {
+
+    height = 60;
+    width = 50;
+    speedX = 30;
 
     constructor(x, y) {
-        super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
-        this.x = x;
+        super().loadImage(ImageHub.BOTTLE.rotation[0]);
+        this.loadImages(ImageHub.BOTTLE.rotation);
+        this.x = x;    
         this.y = y;
-        this.height = 60;
-        this.width = 50;
         this.throw();
+        console.log(this);
     }
 
     throw() {
-        this.speedY = 30;
+        this.speedY = 25;
         this.applyGravity();
         setInterval(() => {
-            this.x += 10;
-        }, 25);
+            this.x += this.speedX;
+        this.playAnimation(ImageHub.BOTTLE.rotation);
+        }, 60);
     }
     
+    isAboveGround() {
+
+        return true;
+    }
 }

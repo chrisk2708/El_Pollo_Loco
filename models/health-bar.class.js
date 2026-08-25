@@ -1,15 +1,10 @@
-class StatusBar extends DrawableObject {
+import { DrawableObject } from "./drawable-object.class.js";
+import { ImageHub } from "./img-hub.class.js";
 
-    IMAGES = [
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png',
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/40.png',
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/60.png',
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png',
-        'img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png'
-    ];
+export class HealthBar extends DrawableObject {
 
     percentage = 100;
+    IMAGES = ImageHub.STATUSBAR.healthPercentages;
 
     constructor() {
         super();

@@ -1,8 +1,8 @@
-class Keyboard {
-    LEFT = false;
-    RIGHT = false;
-    UP = false;
-    DOWN = false;
-    SPACE = false;
-    B = false;
+export class Keyboard {
+    static LEFT = false;
+    static RIGHT = false;
+    static UP = false;
+    static DOWN = false;
+    static SPACE = false;
+    static B = false;
 }

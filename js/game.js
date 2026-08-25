@@ -1,6 +1,9 @@
+import { Keyboard } from "../models/keyboard.class.js";
+import { World } from "../models/world.class.js";
+
+
 let canvas;
 let world;
-let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById('canvas');
@@ -11,65 +14,67 @@ function init() {
 }
 
 window.addEventListener("keyup", (e) => {
-    console.log(e.code); 
+    // console.log(e.code); 
     
     if (e.code == "Space") {
-        keyboard.SPACE = false;
+        Keyboard.SPACE = false;
     }
 
     if (e.code == "KeyB") {
-        keyboard.B = false;
+        Keyboard.B = false;
     }
     
     if (e.code == "ArrowLeft") {
-        keyboard.LEFT = false;
+        Keyboard.LEFT = false;
     }
 
     if (e.code == "ArrowUp") {
-        keyboard.UP = false;
+        Keyboard.UP = false;
     }
 
     if (e.code == "ArrowRight") {
-        keyboard.RIGHT = false;
+        Keyboard.RIGHT = false;
     }
 
     if (e.code == "ArrowDown") {
-        keyboard.DOWN = false;
+        Keyboard.DOWN = false;
     }
 
 
-    console.log(e);
+    // console.l og(e);
     
     
 });
 
 window.addEventListener("keydown", (e) => {
     if (e.code == "Space") {
-        keyboard.SPACE = true;
+        Keyboard.SPACE = true;
     }
 
     if (e.code == "KeyB") {
-        keyboard.B = true;
+        Keyboard.B = true;
     }
     
     if (e.code == "ArrowLeft") {
-        keyboard.LEFT = true;
+        Keyboard.LEFT = true;
     }
 
     if (e.code == "ArrowUp") {
-        keyboard.UP = true;
+        Keyboard.UP = true;
     }
 
     if (e.code == "ArrowRight") {
-        keyboard.RIGHT = true;
+        Keyboard.RIGHT = true;
     }
 
     if (e.code == "ArrowDown") {
-        keyboard.DOWN = true;
+        Keyboard.DOWN = true;
     }
 
 
-    console.log(e);
+    // console.l og(e);
     
-    
+
 });
+
+init();

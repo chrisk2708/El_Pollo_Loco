@@ -1,4 +1,4 @@
-class DrawableObject {
+export class DrawableObject {
     
     x = 120;
     y = 280;
@@ -26,12 +26,10 @@ class DrawableObject {
     }
 
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken) {
-            ctx.beginPath();
-            ctx.lineWidth = '5';
-            ctx.strokeStyle = 'blue';
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.lineWidth = '3 ';
+        ctx.strokeStyle = 'blue';
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
     }
 }

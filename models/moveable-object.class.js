@@ -1,4 +1,6 @@
-class MoveableObject extends DrawableObject {
+import { DrawableObject } from "./drawable-object.class.js";
+
+export class MoveableObject extends DrawableObject {
     
     speed = 0.2;
     otherDirection = false;
@@ -17,11 +19,7 @@ class MoveableObject extends DrawableObject {
     }
 
     isAboveGround() {
-        if (this instanceof ThrowableObject) {
-            return true;
-        } else {
-            return this.y < 130;
-        }
+        return this.y < 130;
     }
 
     // character.isColliding(chicken);

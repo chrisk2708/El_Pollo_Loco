@@ -1,30 +1,26 @@
-class Endboss extends MoveableObject {
+import { ImageHub } from "./img-hub.class.js";
+import { MoveableObject } from "./moveable-object.class.js";
+
+export class Endboss extends MoveableObject {
 
     height = 450;
     width = 350;
     y = 10;
 
-    IMAGES_WALKING = [
-        'img/4_enemie_boss_chicken/2_alert/G5.png',
-        'img/4_enemie_boss_chicken/2_alert/G6.png',
-        'img/4_enemie_boss_chicken/2_alert/G7.png',
-        'img/4_enemie_boss_chicken/2_alert/G8.png',
-        'img/4_enemie_boss_chicken/2_alert/G9.png',
-        'img/4_enemie_boss_chicken/2_alert/G10.png',
-        'img/4_enemie_boss_chicken/2_alert/G11.png',
-        'img/4_enemie_boss_chicken/2_alert/G12.png'
-    ];
-
     constructor() {
-        super().loadImage(this.IMAGES_WALKING[0]);
-        this.loadImages(this.IMAGES_WALKING);
+        super().loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
+        this.loadImages(ImageHub.BOSS_CHICKEN.walk);
+        this.loadImages(ImageHub.BOSS_CHICKEN.alert);
+        this.loadImages(ImageHub.BOSS_CHICKEN.attack);
+        this.loadImages(ImageHub.BOSS_CHICKEN.hurt);
+        this.loadImages(ImageHub.BOSS_CHICKEN.dead);
         this.x = 1000;
         this.animate();
     }
 
     animate() {
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            this.playAnimation(ImageHub.BOSS_CHICKEN.walk);
         }, 200);
     }
 

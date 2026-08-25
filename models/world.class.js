@@ -1,23 +1,31 @@
-class World {
+import { level1 } from "../levels/level1.js";
+import { Character } from "./character.class.js";
+import { Chicken } from "./normal-chicken.class.js";
+import { Endboss } from "./endboss.class.js";
+import { Keyboard } from "./keyboard.class.js";
+import { SmallChicken } from "./small-chicken.class.js";
+import { ThrowableObject } from "./throwable-object.class.js";
+import { HealthBar } from "./health-bar.class.js";
+
+export class World {
     character = new Character();
     level = level1;
     canvas;
     ctx;
-    keyboard;
     camera_x = 0;
-    statusBar = new StatusBar();
+    healthbar = new HealthBar();
     throwableObjects = [];
 
     constructor(canvas) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
-        this.keyboard = keyboard;
-        this.draw();
         this.setWorld();
+        this.draw();
         this.run();
     }
 
     setWorld() {
+        
         this.character.world = this;
     }
 
@@ -29,8 +37,8 @@ class World {
     }
 
     checkThrowObjects() {
-        if (this.keyboard.B) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100)
+        if (Keyboard.B) {
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120)
             this.throwableObjects.push(bottle);
         }
     }
@@ -39,29 +47,24 @@ class World {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy) ) {
                 this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
+                this.healthbar.setPercentage(this.character.energy);
             }
         });
     }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.ctx.translate(this.camera_x, 0);
+        
+        this.ctx.translate(this.character.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
-
-        this.ctx.translate(-this.camera_x, 0);
-        // ------ Space for fixed objects ------
-        this.addToMap(this.statusBar);
-        this.ctx.translate(this.camera_x, 0);
 
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.throwableObjects);
 
-        this.ctx.translate(-this.camera_x, 0);
-
+        this.ctx.translate(-this.character.camera_x, 0);
+        this.addToMap(this.healthbar);
         let self = this;
         requestAnimationFrame(function() {
             self.draw();
@@ -71,6 +74,7 @@ class World {
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
+            // o.draw(this.ctx);
         });
     }
 
@@ -80,7 +84,8 @@ class World {
         }
         
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
+        if (mo instanceof Character || mo instanceof Chicken 
+            || mo instanceof SmallChicken || mo instanceof Endboss) mo.drawFrame(this.ctx);
 
         if (mo.otherDirection) {
             this.flipImageBack(mo);
