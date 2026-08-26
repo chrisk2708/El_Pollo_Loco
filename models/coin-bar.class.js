@@ -1,19 +1,19 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
 
-export class HealthBar extends DrawableObject {
+export class CoinBar extends DrawableObject {
 
-    percentage = 100;
-    IMAGES = ImageHub.STATUSBAR.health;
+    percentage = 0;
+    IMAGES = ImageHub.STATUSBAR.coins;
 
     constructor() {
         super();
         this.loadImages(this.IMAGES);
         this.x = 0;
-        this.y = 0;
+        this.y = 40;
         this.width = 200;
         this.height = 50;
-        this.setPercentage(100);
+        this.setPercentage(0);
     }
 
     setPercentage(percentage) {

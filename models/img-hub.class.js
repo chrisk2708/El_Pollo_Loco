@@ -143,7 +143,15 @@ export class ImageHub {
 	};
 
 	static STATUSBAR = {
-		healthPercentages: [
+		coins: [
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png",
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/20.png",
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/40.png",
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/60.png",
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/80.png",
+            "./img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png",
+        ],
+		health: [
 			"./img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png",
 			"./img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png",
 			"./img/7_statusbars/1_statusbar/2_statusbar_health/blue/40.png",
@@ -151,6 +159,22 @@ export class ImageHub {
 			"./img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png",
 			"./img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png",
 		],
+		bottles: [
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png",
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/20.png",
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/40.png",
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/60.png",
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/80.png",
+            "./img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png",
+        ],
+		endBoss: [
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange0.png",
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange20.png",
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange40.png",
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange60.png",
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange80.png",
+            "./img/7_statusbars/2_statusbar_endboss/orange/orange100.png",
+        ],
 		icons: {
 			coin: "./img/7_statusbars/3_icons/icon_coin.png",
 			health: "./img/7_statusbars/3_icons/icon_health.png",
@@ -163,6 +187,13 @@ export class ImageHub {
 			green: "./img/7_statusbars/4_bar_elements/statusbar_green.png",
 			orange: "./img/7_statusbars/4_bar_elements/statusbar_orange.png",
 		}
+	};
+
+	static COIN = { 
+		coin: [
+			"./img/8_coin/coin_1.png",
+			"./img/8_coin/coin_2.png",
+		]
 	};
 
 	static INTRO_OUTRO_SCREENS = {
@@ -184,6 +215,4 @@ export class ImageHub {
 			"./img/You won, you lost/You lost.png",
 		],
 	};
-
-	static COIN = { coin: "./img/8_coin/coin_2.png" };
 }

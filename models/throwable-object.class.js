@@ -26,7 +26,6 @@ export class ThrowableObject extends MoveableObject {
     }
     
     isAboveGround() {
-
         return true;
     }
 }

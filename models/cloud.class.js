@@ -2,20 +2,26 @@ import { ImageHub } from './img-hub.class.js';
 import { MoveableObject } from './moveable-object.class.js';
 
 export class Cloud extends MoveableObject {
-    y = 20;
-    width = 500;
-    height = 250;
+
+    IMAGES = ImageHub.BACKGROUND.clouds;
 
     constructor() {
-        super();
-        this.loadImage(ImageHub.BACKGROUND.clouds[0]);
-        this.loadImages(ImageHub.BACKGROUND.clouds);
-        this.x = Math.random() * 500;
+        super().loadImage(this.IMAGES[0]);
+        this.loadImages(this.IMAGES);
+        this.x = 0;
+        this.y = 20;
+        this.width = 500;
+        this.height = 250;
         this.animate();
     }
 
     animate() {
-        this.moveLeft();
-    }
+        setInterval(() => {
+            this.moveLeft();
+        }, 1000 / 60);
 
+        // setInterval(() => {
+        //     this.playAnimation(ImageHub.BACKGROUND.clouds);
+        // }, 300);
+    }
 }

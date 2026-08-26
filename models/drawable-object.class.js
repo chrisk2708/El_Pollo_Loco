@@ -32,4 +32,22 @@ export class DrawableObject {
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.stroke();
     }
+
+    drawOffsetFrame(ctx) {
+        if(this instanceof Character || this instanceof Chicken || this instanceof ChickenSmall || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof Salsabottle) {
+            ctx.beginPath();
+            ctx.lineWidth = '5';
+            ctx.strokeStyle = 'red';
+            ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.top - this.offset.bottom);
+            ctx.stroke();
+        }
+    }
+
+    playAnimation(images) {
+        let i = this.currentImage % images.length; //0,1,2,3,4,5,0,1,2,3...
+        let path = images[i];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    }
+
 }

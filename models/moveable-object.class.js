@@ -7,6 +7,7 @@ export class MoveableObject extends DrawableObject {
     speedY = 0;
     acceleration = 2.5;
     energy = 100;
+    coins = 0;
     lastHit = 0;
 
     applyGravity() {
@@ -47,13 +48,6 @@ export class MoveableObject extends DrawableObject {
 
     isDead() {
         return this.energy == 0;
-    }
-
-    playAnimation(images) {
-        let i = this.currentImage % images.length; //0,1,2,3,4,5,0,1,2,3...
-        let path = images[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
     }
 
     moveRight() {

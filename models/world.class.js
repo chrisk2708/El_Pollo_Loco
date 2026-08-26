@@ -6,21 +6,23 @@ import { Keyboard } from "./keyboard.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
 import { HealthBar } from "./health-bar.class.js";
+import { CoinBar } from "./coin-bar.class.js";
 
 export class World {
-    character = new Character();
-    level = level1;
-    canvas;
     ctx;
+    canvas;
     camera_x = 0;
+    character = new Character();
     healthbar = new HealthBar();
+    coinbar = new CoinBar();
+    level = level1;
     throwableObjects = [];
 
     constructor(canvas) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
-        this.setWorld();
         this.draw();
+        this.setWorld();
         this.run();
     }
 
@@ -29,46 +31,31 @@ export class World {
         this.character.world = this;
     }
 
-    run() {
-        setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowObjects();
-        }, 200);
-    }
-
-    checkThrowObjects() {
-        if (Keyboard.B) {
-            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120)
-            this.throwableObjects.push(bottle);
-        }
-    }
-
-    checkCollisions() {
-        this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy) ) {
-                this.character.hit();
-                this.healthbar.setPercentage(this.character.energy);
-            }
-        });
-    }
-
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.ctx.translate(this.character.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
-
-        this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
+        this.ctx.translate(-this.character.camera_x, 0);
+
+        this.addToMap(this.healthbar);
+        this.addToMap(this.coinbar);
+
+        this.ctx.translate(this.character.camera_x, 0);
+        
         this.addObjectsToMap(this.level.enemies);
+        this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObjects);
 
         this.ctx.translate(-this.character.camera_x, 0);
-        this.addToMap(this.healthbar);
-        let self = this;
-        requestAnimationFrame(function() {
-            self.draw();
-        });
+        
+        requestAnimationFrame(() => this.draw());
+        
+        // let self = this;
+        // requestAnimationFrame(function() {
+        //     self.draw();
+        // });
     }
 
     addObjectsToMap(objects) {
@@ -102,5 +89,32 @@ export class World {
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();         // Spiegeln rückgängig machen
+    }
+
+    run() {
+        setInterval(() => {
+            this.checkCollisions();
+            this.checkThrowObjects();
+        }, 200);
+    }
+
+    checkThrowObjects() {
+        if (Keyboard.B) {
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120)
+            this.throwableObjects.push(bottle);
+        }
+    }
+
+    checkCollisions() {
+        this.level.enemies.forEach((enemy) => {
+            if (this.character.isColliding(enemy) ) {
+                this.character.hit();
+                this.healthbar.setPercentage(this.character.energy);
+            }
+        });
+    }
+
+    checkCollisionSubject() {
+
     }
 }

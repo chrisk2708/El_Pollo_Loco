@@ -8,10 +8,18 @@ export class Character extends MoveableObject {
     speed = 10;
     world;
     camera_x;
+    isLongIdle = false;
     walking_sound = new Audio('audio/running.mp3');
+
+    offset = {
+        top: 80,
+        bottom: 10,
+        left: 20,
+        right: 30
+    };
     
     constructor() {
-        super().loadImage('img/2_character_pepe/2_walk/W-21.png');
+        super().loadImage(ImageHub.PEPE.idle[0]);
         this.loadImages(ImageHub.PEPE.idle);
         this.loadImages(ImageHub.PEPE.longIdle);
         this.loadImages(ImageHub.PEPE.walk);
@@ -53,6 +61,8 @@ export class Character extends MoveableObject {
                 this.playAnimation(ImageHub.PEPE.hurt);
             } else if (this.isAboveGround()) {
                 this.playAnimation(ImageHub.PEPE.jump);
+            // } else if (this.isLongIdle()) {
+                // this.playAnimation(ImageHub.PEPE.longIdle);
             } else {
 
                 if (Keyboard.RIGHT || Keyboard.LEFT) {
