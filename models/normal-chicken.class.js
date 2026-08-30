@@ -7,13 +7,21 @@ export class Chicken extends MoveableObject {
     height = 50;
     width = 50;
 
+    offset = {
+        top: 5,  
+        bottom: 5,
+        left: 5,
+        right: 5
+    };
+
     constructor() {
         super().loadImage(ImageHub.NORMAL_CHICKEN.walk[0]);
         this.loadImages(ImageHub.NORMAL_CHICKEN.walk);
         this.loadImages(ImageHub.NORMAL_CHICKEN.dead);
 
-        this.x = 200 + Math.random() * 500;
+        this.x = 200 + Math.random() * 1440;
         this.speed = this.speed + Math.random() * 0.3;
+        this.getRealFrame();
         this.animate();
     }
 

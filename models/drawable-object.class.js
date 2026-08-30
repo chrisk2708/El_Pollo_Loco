@@ -1,6 +1,6 @@
 export class DrawableObject {
-    
-    x = 120;
+    rX; rY; rW; rH;
+    x = 100;
     y = 280;
     height = 150;
     width = 100;
@@ -27,20 +27,26 @@ export class DrawableObject {
 
     drawFrame(ctx) {
         ctx.beginPath();
-        ctx.lineWidth = '3 ';
+        ctx.lineWidth = '2 ';
         ctx.strokeStyle = 'blue';
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.stroke();
     }
 
-    drawOffsetFrame(ctx) {
-        if(this instanceof Character || this instanceof Chicken || this instanceof ChickenSmall || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof Salsabottle) {
+    getRealFrame() {
+        this.rX = this.x + this.offset.left;
+        this.rY = this.y + this.offset.top;
+        this.rW = this.width - this.offset.left - this.offset.right;
+        this.rH = this.height - this.offset.top - this.offset.bottom;
+    }
+
+    drawCollideFrame(ctx) {
             ctx.beginPath();
-            ctx.lineWidth = '5';
+            ctx.lineWidth = '2';
             ctx.strokeStyle = 'red';
-            ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.right - this.offset.left, this.height - this.offset.top - this.offset.bottom);
+            // console.log(this.rX, this.rY, this.rW, this.rH)
+            ctx.rect(this.rX, this.rY, this.rW, this.rH);
             ctx.stroke();
-        }
     }
 
     playAnimation(images) {

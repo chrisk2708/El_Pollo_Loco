@@ -7,11 +7,19 @@ export class ThrowableObject extends MoveableObject {
     width = 50;
     speedX = 30;
 
+    offset = {
+        top: 5,  
+        bottom: 5,
+        left: 5,
+        right: 5
+    };
+
     constructor(x, y) {
         super().loadImage(ImageHub.BOTTLE.rotation[0]);
         this.loadImages(ImageHub.BOTTLE.rotation);
         this.x = x;    
         this.y = y;
+        this.getRealFrame();
         this.throw();
         console.log(this);
     }

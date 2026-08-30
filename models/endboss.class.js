@@ -7,6 +7,13 @@ export class Endboss extends MoveableObject {
     width = 350;
     y = 10;
 
+    offset = {
+        top: 80,  
+        bottom: 20,
+        left: 30,
+        right: 15
+    };
+
     constructor() {
         super().loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
         this.loadImages(ImageHub.BOSS_CHICKEN.walk);
@@ -15,12 +22,13 @@ export class Endboss extends MoveableObject {
         this.loadImages(ImageHub.BOSS_CHICKEN.hurt);
         this.loadImages(ImageHub.BOSS_CHICKEN.dead);
         this.x = 1000;
+        this.getRealFrame();
         this.animate();
     }
 
     animate() {
         setInterval(() => {
-            this.playAnimation(ImageHub.BOSS_CHICKEN.walk);
+            this.playAnimation(ImageHub.BOSS_CHICKEN.alert);
         }, 200);
     }
 

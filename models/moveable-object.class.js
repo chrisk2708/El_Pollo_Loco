@@ -25,12 +25,13 @@ export class MoveableObject extends DrawableObject {
 
     // character.isColliding(chicken);
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height
+        return this.rX + this.rW > mo.rX &&
+            this.rY + this.rH > mo.rY &&
+            this.rX < mo.rX + mo.rW &&
+            this.rY < mo.rY + mo.rH;
     }
-    // energy Zähler
+
+    // Treffer / Energy Zähler
     hit() {
         this.energy -= 10 ;
         if (this.energy < 0) {
@@ -43,7 +44,7 @@ export class MoveableObject extends DrawableObject {
     isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;   // Diff in ms
         timePassed = timePassed / 1000;                         // Diff in sec
-        return timePassed < 1;
+        return timePassed < 0.5;
     }
 
     isDead() {

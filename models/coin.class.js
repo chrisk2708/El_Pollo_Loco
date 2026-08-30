@@ -3,6 +3,13 @@ import { ImageHub } from "./img-hub.class.js";
 
 export class Coin extends DrawableObject {
 
+    offset = {
+        top: 35,  
+        bottom: 35,
+        left: 35,
+        right: 35
+    };
+
     IMAGES = ImageHub.COIN.coin;
 
     constructor(x, y) {
@@ -12,6 +19,7 @@ export class Coin extends DrawableObject {
         this.height = 100;
         this.x = x;
         this.y = y;
+        this.getRealFrame();
         this.animate();
     }
 

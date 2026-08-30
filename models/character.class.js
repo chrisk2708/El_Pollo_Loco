@@ -3,19 +3,19 @@ import { Keyboard } from "./keyboard.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
 export class Character extends MoveableObject {
-    y = 40; //140
+    y = 130; //140
     height = 300;
     speed = 10;
     world;
     camera_x;
     isLongIdle = false;
-    walking_sound = new Audio('audio/running.mp3');
+    // walking_sound = new Audio('audio/running.mp3');
 
     offset = {
-        top: 80,
+        top: 110,  
         bottom: 10,
-        left: 20,
-        right: 30
+        left: 15,
+        right: 20
     };
     
     constructor() {
@@ -26,8 +26,11 @@ export class Character extends MoveableObject {
         this.loadImages(ImageHub.PEPE.jump);
         this.loadImages(ImageHub.PEPE.hurt);
         this.loadImages(ImageHub.PEPE.dead);
+        this.getRealFrame();
         this.applyGravity();
         this.animate();
+        console.log(this);
+        
     }
 
     animate() {
@@ -51,7 +54,7 @@ export class Character extends MoveableObject {
             }
             
             this.camera_x = -this.x + 120;
-        }, 1000 / 30);
+        }, 1000 / 50);
 
         setInterval(() => {
 
@@ -72,7 +75,7 @@ export class Character extends MoveableObject {
                     this.playAnimation(ImageHub.PEPE.idle);
                 }
             }
-        }, 100);
+        }, 250);
     }
 
     jump() {

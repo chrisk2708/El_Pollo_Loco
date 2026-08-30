@@ -8,9 +8,6 @@ let world;
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas);
-
-    
-    console.log('My Character is', world.character);
 }
 
 window.addEventListener("keyup", (e) => {
@@ -39,11 +36,6 @@ window.addEventListener("keyup", (e) => {
     if (e.code == "ArrowDown") {
         Keyboard.DOWN = false;
     }
-
-
-    // console.l og(e);
-    
-    
 });
 
 window.addEventListener("keydown", (e) => {
@@ -70,11 +62,6 @@ window.addEventListener("keydown", (e) => {
     if (e.code == "ArrowDown") {
         Keyboard.DOWN = true;
     }
-
-
-    // console.l og(e);
-    
-
 });
 
 init();
