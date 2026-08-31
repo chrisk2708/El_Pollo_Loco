@@ -23,7 +23,13 @@ export class World {
     bottlebar = new BottleBar();
     endbossbar = new EndbossBar();
     level = level1;
+    coins = 0;
+    bottles = 0;
+    lastThrow = 0;
+    bottleHitEnemy = 0;
+    lastEndbossHit = 0;
     throwableObjects = [];
+    isThrow = false;
 
     constructor(canvas) {
         this.ctx = canvas.getContext('2d');
@@ -103,22 +109,12 @@ export class World {
 
     run() {
         setInterval(() => {
-            // this.checkBottleAttack();
+            this.checkBottleThrow();
             this.checkBottleHitGround();
             this.checkCollisionCollectible();
-        }, 50);
-
-        setInterval(() => {
             this.checkCollisions();
-            this.checkThrowObjects();
-        }, 100);
-    }
-
-    checkThrowObjects() {
-        if (Keyboard.B) {
-            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120)
-            this.throwableObjects.push(bottle);
-        }
+            this.checkBottleHitEnemy();
+        }, 1000 / 60); 
     }
 
     checkCollisions() {
@@ -136,36 +132,91 @@ export class World {
     checkCollisionCollectible() {
         this.level.collectibles.forEach(collectible => {
             if (this.character.isColliding(collectible)) {
+                console.log(this.character);
                 if (collectible instanceof Coin) {
-                    this.character.coins++;
+                    this.coins++;
                     let index = this.level.collectibles.indexOf(collectible);
                     this.level.collectibles.splice(index, 1);
-                    if (!this.muted) {
-                        this.pickupCoinSound.volume = 0.6;
-                        this.pickupCoinSound.play();
-                    }
-                    this.coinbar.setPercentage(this.character.coins * 20);
+                    this.coinbar.setPercentage(this.coins * 20);
+                    // if (!this.muted) {
+                    //     this.pickupCoinSound.volume = 0.6;
+                    //     this.pickupCoinSound.play();
+                    // }
+                    
                 } else if (collectible instanceof SalsaBottle) {
-                    this.character.bottles++;
+                    this.bottles++;
                     let index = this.level.collectibles.indexOf(collectible);
                     this.level.collectibles.splice(index, 1);
-                    if (!this.muted) {
-                        this.pickupBottleSound.volume = 0.5;
-                        this.pickupBottleSound.play();
-                    }
-                    this.bottlebar.setPercentage(this.character.bottles * 20);
+                    this.bottlebar.setPercentage(this.bottles * 20);
+                    // if (!this.muted) {
+                    //     this.pickupBottleSound.volume = 0.5;
+                    //     this.pickupBottleSound.play();
+                    // }
+                    
                 }
             }
         });
     }
 
+    hitBottle(bottle, enemy) {
+        let enemyIndex = this.level.enemies.indexOf(enemy);
+        this.lastThrow = new Date().getTime();
+        this.bottleHitEnemy = true;
+        if(enemy instanceof Chicken || enemy instanceof SmallChicken) {
+            enemy.energy = 0;
+        } else if(enemy instanceof Endboss) {
+            enemy.energy -= 20;
+            this.endbossbar.setPercentage(this.level.enemies[this.level.enemies.length-1].energy);
+            enemy.lastEndbossHit = new Date().getTime();
+        }
+
+        setTimeout(() => {
+            this.throwableObjects.splice(bottle, 1);
+        }, 100);
+
+        if(enemy.isDead() && !(enemy instanceof Endboss)) {
+            setTimeout(() => {
+                this.level.enemies.splice(enemyIndex, 1);
+            }, 400);
+        }
+    }
+
+    checkBottleThrow() {
+        if (Keyboard.B && !this.isThrow && this.bottles > 0) {
+            this.isThrow = true;
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120);
+            this.throwableObjects.push(bottle);
+            this.bottles--;
+            this.bottlebar.setPercentage(this.bottles * 20);
+            setTimeout(() => {
+                this.isThrow = false;
+            }, 1600);
+        }
+    }
+
+    checkLastThrow() {
+        let timePassed = new Date().getTime() - this.lastThrow;
+        timePassed = timePassed / 1000;
+        return timePassed > 0.5;
+    }
+
+    checkBottleHitEnemy() {
+        this.throwableObjects.forEach(bottle => {
+            this.level.enemies.forEach(enemy => {
+                if (bottle.isColliding(enemy) && bottle.checkLastThrow()) {
+                    bottle.bottleHit(bottle, enemy);
+                }
+            });
+        })
+    }
+
     checkBottleHitGround() {
         for (let i = 0; i < this.throwableObjects.length; i++) {
             const element = this.throwableObjects[i];
-            if (element.y >= 400) {
+            if (element.y >= 360) {
                 setTimeout(() => {
                     this.throwableObjects.splice(element, 1);
-                }, 100);
+                }, 200);
             }
         }
     }

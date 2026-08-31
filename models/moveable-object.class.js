@@ -1,14 +1,14 @@
 import { DrawableObject } from "./drawable-object.class.js";
 
 export class MoveableObject extends DrawableObject {
-    
+    id;
     speed = 0.2;
-    otherDirection = false;
     speedY = 0;
+    otherDirection = false;
     acceleration = 2.5;
     energy = 100;
-    coins = 0;
     lastHit = 0;
+    
 
     applyGravity() {
         setInterval(() => {
@@ -24,7 +24,7 @@ export class MoveableObject extends DrawableObject {
     }
 
     isFalling() {
-        return (world.character.isAboveGround() && world.character.speedY < 0);
+        return (this.isAboveGround() && this.speedY < 0);
     }
 
     // character.isColliding(chicken);

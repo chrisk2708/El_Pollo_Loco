@@ -26,6 +26,6 @@ export class SalsaBottle extends DrawableObject {
     animate() {
         setInterval(() => {
             this.playAnimation(this.IMAGES);
-        }, 600);
+        }, 700);
     }
 }
