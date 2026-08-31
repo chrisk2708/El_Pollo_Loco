@@ -6,6 +6,8 @@ export class Character extends MoveableObject {
     y = 130; //140
     height = 300;
     speed = 10;
+    coins = 0;
+    bottles = 0;
     world;
     camera_x;
     isLongIdle = false;

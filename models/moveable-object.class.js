@@ -23,6 +23,10 @@ export class MoveableObject extends DrawableObject {
         return this.y < 130;
     }
 
+    isFalling() {
+        return (world.character.isAboveGround() && world.character.speedY < 0);
+    }
+
     // character.isColliding(chicken);
     isColliding(mo) {
         return this.rX + this.rW > mo.rX &&

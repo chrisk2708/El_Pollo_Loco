@@ -21,7 +21,7 @@ export class Endboss extends MoveableObject {
         this.loadImages(ImageHub.BOSS_CHICKEN.attack);
         this.loadImages(ImageHub.BOSS_CHICKEN.hurt);
         this.loadImages(ImageHub.BOSS_CHICKEN.dead);
-        this.x = 1000;
+        this.x = 2000;
         this.getRealFrame();
         this.animate();
     }

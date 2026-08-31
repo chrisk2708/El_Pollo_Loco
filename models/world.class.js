@@ -8,6 +8,9 @@ import { ThrowableObject } from "./throwable-object.class.js";
 import { HealthBar } from "./health-bar.class.js";
 import { CoinBar } from "./coin-bar.class.js";
 import { Coin } from "./coin.class.js";
+import { SalsaBottle } from "./salsa-bottle.class.js";
+import { BottleBar } from "./bottle-bar.class.js";
+import { EndbossBar } from "./endboss-bar.class.js";
 
 export class World {
     ctx;
@@ -17,11 +20,10 @@ export class World {
     character = new Character();
     healthbar = new HealthBar();
     coinbar = new CoinBar();
-    // bottlebar = new BottleBar();
+    bottlebar = new BottleBar();
+    endbossbar = new EndbossBar();
     level = level1;
     throwableObjects = [];
-    // pickUpBottleSound = new Audio('./audio/pick_bottle.mp3');
-    // pickUpCoinSound = new Audio('./audio/pick_coin.mp3');
 
     constructor(canvas) {
         this.ctx = canvas.getContext('2d');
@@ -39,14 +41,15 @@ export class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
         this.ctx.translate(this.character.camera_x, 0);
+
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.collectibles);
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObjects);
+
         this.character.drawFrame(this.ctx);
         this.character.getRealFrame();
         this.character.drawCollideFrame(this.ctx);
@@ -55,6 +58,8 @@ export class World {
 
         this.addToMap(this.healthbar);
         this.addToMap(this.coinbar);
+        this.addToMap(this.bottlebar);
+        this.addToMap(this.endbossbar);
         
         requestAnimationFrame(() => this.draw());
     }
@@ -62,7 +67,6 @@ export class World {
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
-            // o.draw(this.ctx);
         });
     }
 
@@ -74,7 +78,7 @@ export class World {
         
         mo.draw(this.ctx);
         if (mo instanceof Character || mo instanceof Chicken || mo instanceof SmallChicken
-            || mo instanceof Endboss || mo instanceof Coin) {
+            || mo instanceof Endboss || mo instanceof Coin || mo instanceof SalsaBottle) {
             mo.drawFrame(this.ctx);
             mo.getRealFrame();
             mo.drawCollideFrame(this.ctx);
@@ -100,14 +104,14 @@ export class World {
     run() {
         setInterval(() => {
             // this.checkBottleAttack();
-            // this.checkBottleHitGround();
+            this.checkBottleHitGround();
             this.checkCollisionCollectible();
         }, 50);
 
         setInterval(() => {
             this.checkCollisions();
             this.checkThrowObjects();
-        }, 200);
+        }, 100);
     }
 
     checkThrowObjects() {
@@ -120,7 +124,7 @@ export class World {
     checkCollisions() {
         this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit();
+                this.character.hit(enemy);
                 if (this.character.isAboveGround() && !(enemy instanceof Endboss)) {
                     this.character.speedY = 15;
                 }
@@ -141,7 +145,7 @@ export class World {
                         this.pickupCoinSound.play();
                     }
                     this.coinbar.setPercentage(this.character.coins * 20);
-                } else if (collectible instanceof Bottle && world.bottlebar.percentage != 100) {
+                } else if (collectible instanceof SalsaBottle) {
                     this.character.bottles++;
                     let index = this.level.collectibles.indexOf(collectible);
                     this.level.collectibles.splice(index, 1);

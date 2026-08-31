@@ -16,6 +16,8 @@ export class Level {
         this.enemies = enemies;
         this.collectibles = collectibles;
         console.log(enemies);
+        console.log(collectibles);
+        
     }
 
     addBgLayer(sections) {
