@@ -2,14 +2,19 @@ import { MoveableObject } from './moveable-object.class.js';
 
 export class Cloud extends MoveableObject {
 
-    // IMAGES = ImageHub.BACKGROUND.clouds;
-
     constructor(imagePath, x) {
         super().loadImage(imagePath);
         this.x = x;
         this.y = 20;
         this.width = 500;
         this.height = 250;
+
+        this.offset = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
         this.animate();
     }
 

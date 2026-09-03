@@ -31,7 +31,13 @@ export class Chicken extends MoveableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-            this.playAnimation(ImageHub.NORMAL_CHICKEN.walk);
+            if (this.isDead()) {
+                this.playAnimation(ImageHub.NORMAL_CHICKEN.dead);
+                this.speed = 0;
+                this.getRealFrame();
+            } else {
+                this.playAnimation(ImageHub.NORMAL_CHICKEN.walk);
+            }
         }, 200);
     }
 

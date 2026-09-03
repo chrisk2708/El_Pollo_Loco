@@ -15,7 +15,8 @@ export class Endboss extends MoveableObject {
     };
 
     constructor() {
-        super().loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
+        super();
+        this.loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
         this.loadImages(ImageHub.BOSS_CHICKEN.walk);
         this.loadImages(ImageHub.BOSS_CHICKEN.alert);
         this.loadImages(ImageHub.BOSS_CHICKEN.attack);

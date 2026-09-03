@@ -9,8 +9,8 @@ export const level1 = new Level(
     
     8,
     [
-        new Chicken(), new Chicken(), new Chicken(),new SmallChicken(),
-        new SmallChicken(),new SmallChicken(),new Endboss()
+        new Chicken(1), new Chicken(2), new Chicken(3), new SmallChicken(4),
+        new SmallChicken(5), new SmallChicken(6), new Endboss(7)
     ],
 
     [
@@ -19,5 +19,7 @@ export const level1 = new Level(
         new SalsaBottle(400, 370), new SalsaBottle(450, 370), new SalsaBottle(750, 370),new SalsaBottle(800, 370),
         new SalsaBottle(1000, 370), new SalsaBottle(1200, 370)
     ],
+
+    
 
 );

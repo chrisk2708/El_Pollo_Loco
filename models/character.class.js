@@ -9,6 +9,7 @@ export class Character extends MoveableObject {
     speed = 10;
     world;
     camera_x;
+    idleTimeStamp = new Date().getTime();
     isLongIdle = false;
     // walking_sound = new Audio('audio/running.mp3');
 
@@ -43,43 +44,42 @@ export class Character extends MoveableObject {
                 this.otherDirection = false;
                 // this.walking_sound.play();
             }
-
             if (Keyboard.LEFT && this.x > 0) {
                 this.moveLeft();
                 this.otherDirection = true;
                 // this.walking_sound.play();
             }
-
             if (Keyboard.SPACE && !this.isAboveGround()) {
-                this.jump();
+                this.speedY = 30;
             }
-            
             this.camera_x = -this.x + 120;
-        }, 1000 / 50);
+        }, 1000 / 60);
 
         setInterval(() => {
-
-            if (this.isDead()) {
-                this.playAnimation(ImageHub.PEPE.dead);
-            } else if (this.isHurt()) {
+            this.playAnimation(ImageHub.PEPE.idle);
+            if (this.idleTimeStamp/1000 < new Date().getTime()/1000 - 10) {
+                this.playAnimation(ImageHub.PEPE.longIdle);
+            }
+            if (Keyboard.RIGHT || Keyboard.LEFT) {
+                this.playAnimation(ImageHub.PEPE.walk);
+                this.idleTimeStamp = new Date().getTime();
+            }
+            if (this.isHurt()) {
                 this.playAnimation(ImageHub.PEPE.hurt);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(ImageHub.PEPE.jump);
-            // } else if (this.isLongIdle()) {
-                // this.playAnimation(ImageHub.PEPE.longIdle);
-            } else {
-
-                if (Keyboard.RIGHT || Keyboard.LEFT) {
-                    // Walk Animaton
-                    this.playAnimation(ImageHub.PEPE.walk);
-                } else {
-                    this.playAnimation(ImageHub.PEPE.idle);
-                }
+                this.idleTimeStamp = new Date().getTime();
             }
         }, 250);
-    }
 
-    jump() {
-        this.speedY = 30;
+        setInterval(() => {
+            if (this.isAboveGround()) {
+                this.playAnimation(ImageHub.PEPE.jump);
+            }
+        }, 200);
+
+        setInterval(() => {
+            if (this.isDead()) {
+                this.playAnimation(ImageHub.PEPE.dead);
+            }
+        }, 250);
     }
 }

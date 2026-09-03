@@ -30,7 +30,8 @@ export class ThrowableObject extends MoveableObject {
         this.applyGravity();
 
         setInterval(() => {
-            this.x += this.speed;
+                this.x += this.speed;
+                this.getRealFrame();
         }, 60);
 
         setInterval(() => {

@@ -31,7 +31,13 @@ export class SmallChicken extends MoveableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-            this.playAnimation(ImageHub.SMALL_CHICKEN.walk);
+            if (this.isDead()) {
+                this.playAnimation(ImageHub.SMALL_CHICKEN.dead);
+                this.speed = 0;
+                this.getRealFrame();
+            } else {
+                this.playAnimation(ImageHub.SMALL_CHICKEN.walk);
+            }
         }, 200);
     }
 }
