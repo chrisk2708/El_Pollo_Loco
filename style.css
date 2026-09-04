@@ -7,3 +7,22 @@ body {
 canvas {
     background-color: black;
 }
+
+.audio-btn {
+    display: flex;
+    /* position: absolute; */
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    z-index: 999;
+}
+
+.audio-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}

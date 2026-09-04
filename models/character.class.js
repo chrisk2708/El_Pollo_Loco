@@ -1,17 +1,18 @@
+import { AudioHub } from "./AudioHub.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
 export class Character extends MoveableObject {
-    y = 130; //140
+    y = 130;
     height = 300;
     width = 150;
-    speed = 10;
+    speed = 12;
     world;
     camera_x;
     idleTimeStamp = new Date().getTime();
     isLongIdle = false;
-    // walking_sound = new Audio('audio/running.mp3');
+    isWalking = false;
 
     offset = {
         top: 110,  
@@ -32,54 +33,72 @@ export class Character extends MoveableObject {
         this.applyGravity();
         this.animate();
         console.log(this);
-        
     }
 
     animate() {
+        // Bewegungs- und Eingabe-Schleife (60 FPS)
         setInterval(() => {
-            // this.walking_sound.pause();
+            let isMoving = (Keyboard.RIGHT && this.x < this.world.level.level_end_x) || (Keyboard.LEFT && this.x > 0);
 
             if (Keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
-                // this.walking_sound.play();
             }
             if (Keyboard.LEFT && this.x > 0) {
                 this.moveLeft();
                 this.otherDirection = true;
-                // this.walking_sound.play();
             }
+
+            // Geh-Sound steuern (nur starten, wenn er sich bewegt und am Boden ist)
+            if (isMoving && !this.isAboveGround()) {
+                if (!this.isWalking) {
+                    this.isWalking = true;
+                    AudioHub.playOne(AudioHub.WALK_SOUND);
+                }
+            } else {
+                if (this.isWalking) {
+                    this.isWalking = false;
+                    AudioHub.stopOne(AudioHub.WALK_SOUND);
+                }
+            }
+
             if (Keyboard.SPACE && !this.isAboveGround()) {
                 this.speedY = 30;
+                AudioHub.playOne(AudioHub.JUMP_SOUND);
             }
+
             this.camera_x = -this.x + 120;
         }, 1000 / 60);
 
+        // Animations- und Status-Schleife
         setInterval(() => {
-            this.playAnimation(ImageHub.PEPE.idle);
-            if (this.idleTimeStamp/1000 < new Date().getTime()/1000 - 10) {
-                this.playAnimation(ImageHub.PEPE.longIdle);
-            }
-            if (Keyboard.RIGHT || Keyboard.LEFT) {
-                this.playAnimation(ImageHub.PEPE.walk);
-                this.idleTimeStamp = new Date().getTime();
-            }
-            if (this.isHurt()) {
-                this.playAnimation(ImageHub.PEPE.hurt);
-                this.idleTimeStamp = new Date().getTime();
-            }
-        }, 250);
+            let timePassed = (new Date().getTime() - this.idleTimeStamp) / 1000;
 
-        setInterval(() => {
-            if (this.isAboveGround()) {
-                this.playAnimation(ImageHub.PEPE.jump);
-            }
-        }, 200);
-
-        setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(ImageHub.PEPE.dead);
+                // Dead Sound nur einmal abspielen, wenn gewünscht (oder über Flag steuern)
+            } else if (this.isHurt()) {
+                this.playAnimation(ImageHub.PEPE.hurt);
+                this.idleTimeStamp = new Date().getTime();
+                AudioHub.playOne(AudioHub.HURT_SOUND);
+            } else if (this.isAboveGround()) {
+                this.playAnimation(ImageHub.PEPE.jump);
+            } else if (Keyboard.RIGHT || Keyboard.LEFT) {
+                this.playAnimation(ImageHub.PEPE.walk);
+                this.idleTimeStamp = new Date().getTime();
+            } else {
+                // Idle oder Long Idle
+                if (timePassed > 10) {
+                    if (!this.isLongIdle) {
+                        this.isLongIdle = true;
+                        AudioHub.playOne(AudioHub.SNOR_SOUND); // Spielt einmal ab bei Start des Long-Idle
+                    }
+                    this.playAnimation(ImageHub.PEPE.longIdle);
+                } else {
+                    this.isLongIdle = false;
+                    this.playAnimation(ImageHub.PEPE.idle);
+                }
             }
-        }, 250);
+        }, 150);
     }
 }

@@ -19,10 +19,6 @@ export class World {
     statusbarHealth = new StatusBar("health", 0, 40);
     statusbarCoins = new StatusBar("coins", 0, 80, 0);
     statusbarEndboss = new StatusBar("endBoss", 510, 0);
-    // healthbar = new HealthBar();
-    // coinbar = new CoinBar();
-    // bottlebar = new BottleBar();
-    // endbossbar = new EndbossBar();
     coins = 0;
     bottles = 0;
     level = level1;
@@ -163,7 +159,7 @@ export class World {
         } else if (enemy instanceof SmallChicken && enemy.energy > 0) {
             this.character.energy -= 0.5;
         } else if (enemy instanceof Endboss && enemy.energy > 0) {
-            this.character.energy -= 3;
+            this.character.energy -= 1;
         }
     }
 
@@ -202,11 +198,9 @@ export class World {
                         this.level.enemies.splice(enemyIndex, 1);
                     }
                 }, 300);
-
             } 
-            // Ansonsten: Seitlicher Zusammenstoß -> Charakter nimmt Schaden
+            // Seitlicher Zusammenstoß
             else {
-                console.log("Seitlich getroffen -> Schaden!");
                 this.hit(enemy);
                 this.statusbarHealth.setPercentage(this.character.energy);
             }
@@ -215,9 +209,8 @@ export class World {
 }
 
     checkCollisionCollectible() {
-        this.level.collectibles.forEach(collectible => {
+        this.level.collectibles.forEach((collectible) => {
             if (this.character.isColliding(collectible)) {
-                console.log(this.character.energy);
                 if (collectible instanceof Coin) {
                     this.coins++;
                     let index = this.level.collectibles.indexOf(collectible);
@@ -246,7 +239,8 @@ export class World {
     checkBottleThrow() {
         if (Keyboard.B && !this.isThrow && this.bottles > 0) {
             this.isThrow = true;
-            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 120);
+            const i = this.character.otherDirection ? this.character.x : this.character.x + 100;
+            let bottle = new ThrowableObject(i , this.character.y + 150, this.character.otherDirection);
             this.throwableObjects.push(bottle);
             this.bottles--;
             this.statusbarBottles.setPercentage(this.bottles * 20);

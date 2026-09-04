@@ -1,14 +1,26 @@
+import { AudioHub } from "../models/AudioHub.class.js";
 import { Keyboard } from "../models/keyboard.class.js";
 import { World } from "../models/world.class.js";
 
-
+window.AudioHub = AudioHub;
 let canvas;
 let world;
+const audioButton = document.getElementById('audioBtn');
+audioButton.textContent = "🔇 Sound Aus";
 
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas);
 }
+
+audioButton.addEventListener('click', () => {
+    const muted = AudioHub.toggleMute();
+    if (muted) {
+        audioButton.textContent = "🔇 Sound Aus";
+    } else {
+        audioButton.textContent = "🔊 Sound An";
+    }
+});
 
 window.addEventListener("keyup", (e) => {
     // console.log(e.code); 
