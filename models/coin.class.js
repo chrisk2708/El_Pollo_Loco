@@ -1,5 +1,6 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 
 export class Coin extends DrawableObject {
 
@@ -24,7 +25,7 @@ export class Coin extends DrawableObject {
     }
 
     animate() {
-        setInterval(() => {
+        IntervalHub.startInterval(() => {
             this.playAnimation(this.IMAGES);
         }, 300);
     }

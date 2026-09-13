@@ -1,3 +1,4 @@
+import { IntervalHub } from './interval-hub.class.js';
 import { MoveableObject } from './moveable-object.class.js';
 
 export class Cloud extends MoveableObject {
@@ -19,7 +20,7 @@ export class Cloud extends MoveableObject {
     }
 
     animate() {
-        setInterval(() => {
+        IntervalHub.startInterval(() => {
             this.moveLeft();
             if (this.x <= -this.width) this.x = this.width * 5;
         }, 1000 / 60);

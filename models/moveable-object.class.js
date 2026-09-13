@@ -1,7 +1,9 @@
+import { AudioHub } from "./audio-hub.class.js";
 import { DrawableObject } from "./drawable-object.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 
 export class MoveableObject extends DrawableObject {
-    speed = 0.1;
+    speed = 0.15;
     speedY = 0;
     acceleration = 2.5;
     energy = 100;
@@ -11,7 +13,7 @@ export class MoveableObject extends DrawableObject {
     bottleHitEnemy = false;
 
     applyGravity() {
-    setInterval(() => {
+    IntervalHub.startInterval(() => {
         if (this.isAboveGround() || this.speedY > 0) {
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
@@ -22,16 +24,6 @@ export class MoveableObject extends DrawableObject {
         }
     }, 1000 / 25);
 }
-    
-    // applyGravity() {
-    //     setInterval(() => {
-    //         if (this.isAboveGround() || this.speedY > 0) {
-    //             this.y -= this.speedY;
-    //             this.speedY -= this.acceleration;
-    //             this.getRealFrame();
-    //         }
-    //     }, 1000 / 25);
-    // }
 
     isAboveGround() {
         return this.y <= 130;
@@ -70,6 +62,10 @@ export class MoveableObject extends DrawableObject {
         timePassed = timePassed / 1000;
         return timePassed < 1.5;
     }
+
+    // isAttack() {
+    //     AudioHub.playOne(AudioHub.BOSS_ATTACK);
+    // }
 
     isDead() {
         return this.energy == 0;

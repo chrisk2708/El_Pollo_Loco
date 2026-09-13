@@ -1,4 +1,5 @@
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
 export class SmallChicken extends MoveableObject {
@@ -26,11 +27,11 @@ export class SmallChicken extends MoveableObject {
     }
 
     animate() {
-        setInterval(() => {
+        IntervalHub.startInterval(() => {
             this.moveLeft();
         }, 1000 / 60);
 
-        setInterval(() => {
+        IntervalHub.startInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(ImageHub.SMALL_CHICKEN.dead);
                 this.speed = 0;

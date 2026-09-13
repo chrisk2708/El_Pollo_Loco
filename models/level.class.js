@@ -9,7 +9,7 @@ export class Level {
     clouds = [];
     backgroundObjects = [];
     level_end_x = 3000;
-    step = 720;
+    step = 960;
 
     constructor(sections, enemies, collectibles) {
         this.addBgLayer(sections);
@@ -33,5 +33,6 @@ export class Level {
             this.backgroundObjects.push(new BackgroundObject(imgFirstLayer, this.step * i));
             this.clouds.push(new Cloud(imgCloud, this.step * i));
         }
+        
     }
 }

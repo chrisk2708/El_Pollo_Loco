@@ -1,4 +1,5 @@
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
 export class ThrowableObject extends MoveableObject {
@@ -23,14 +24,13 @@ export class ThrowableObject extends MoveableObject {
         this.otherDirection = direction;
         this.getRealFrame();
         this.throw();
-        console.log(this);
     }
 
     throw() {
-        this.speedY = 25;
+        this.speedY = 26;
         this.applyGravity();
 
-        setInterval(() => {
+        IntervalHub.startInterval(() => {
             if (this.otherDirection == true) {
                 this.x -= this.speed;
                 this.getRealFrame();
@@ -40,14 +40,11 @@ export class ThrowableObject extends MoveableObject {
             }
         }, 1000 / 30);
 
-        setInterval(() => {
-            if(this.y >= 360 || this.bottleHitEnemy == true) {
+        IntervalHub.startInterval(() => {
+            if(this.y >= 340 || this.bottleHitEnemy == true) {
                 this.speedY = 0;
                 this.speed = 0;
                 this.playAnimation(ImageHub.BOTTLE.splash);
-                // if(this.splashSound.played.length == 0 && !world.muted) {
-                //     this.splashSound.play();
-                // }
                 setTimeout(() => {
                     this.bottleHitEnemy = false;
                 }, 200);
@@ -58,6 +55,10 @@ export class ThrowableObject extends MoveableObject {
     }
     
     isAboveGround() {
+        return true;
+    }
+
+    checkLastThrow() {
         return true;
     }
 }

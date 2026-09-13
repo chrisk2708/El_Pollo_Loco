@@ -5,7 +5,8 @@ import { SmallChicken } from "../models/small-chicken.class.js";
 import { Coin } from "../models/coin.class.js";
 import { SalsaBottle } from "../models/salsa-bottle.class.js";
 
-export const level1 = new Level(
+export function level1() {
+    return new Level(
     
     8,
     [
@@ -19,7 +20,5 @@ export const level1 = new Level(
         new SalsaBottle(400, 370), new SalsaBottle(450, 370), new SalsaBottle(750, 370),new SalsaBottle(800, 370),
         new SalsaBottle(1000, 370), new SalsaBottle(1200, 370)
     ],
-
-    
-
 );
+}
