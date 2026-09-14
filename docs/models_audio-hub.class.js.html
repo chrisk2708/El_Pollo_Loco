@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/audio-hub.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/audio-hub.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { MyAudio } from "./audio.class.js";
+
+/** Zentrale statische Verwaltung aller Spiel-Audios und ihrer Wiedergabe. */
+export class AudioHub {
+    static GAME_SOUND = new MyAudio('./assets/audio/background_music.mp3', true);
+    static WALK_SOUND = new MyAudio('./assets/audio/walking.mp3', true);
+    static JUMP_SOUND = new MyAudio('./assets/audio/jump.mp3', false);
+    static HURT_SOUND = new MyAudio('./assets/audio/pepe_hurt.mp3', false);
+    static DEAD_SOUND = new MyAudio('./assets/audio/pepe_dead.mp3', false);
+    static SNOR_SOUND = new MyAudio('./assets/audio/pepe_snoring.mp3', true);
+    static COIN_SOUND = new MyAudio('./assets/audio/pick_coin2.wav', false);
+    static BOTL_PICK = new MyAudio('./assets/audio/pick_bottle.mp3', false);
+    static BOTL_BREAK = new MyAudio('./assets/audio/bottleBreak.mp3', false);
+    static CHIC_DEAD = new MyAudio('./assets/audio/enemy_dead.mp3', false);
+    static BOSS_DEAD = new MyAudio('./assets/audio/endboss_dead.mp3', false);
+    static BOSS_HURT = new MyAudio('./assets/audio/endboss_hurt.mp3', false);
+    static BOSS_ALERT = new MyAudio('./assets/audio/endboss_alert.mp3', false);
+    static BOSS_ATTACK = new MyAudio('./assets/audio/endboss_attack.mp3', false);
+
+    static WIN_SOUND = new MyAudio('./assets/audio/win.mp3', false);
+    static GAME_OVER = new MyAudio('', false);
+
+    static allSounds = [
+        AudioHub.GAME_SOUND, 
+        AudioHub.WALK_SOUND, 
+        AudioHub.JUMP_SOUND, 
+        AudioHub.HURT_SOUND, 
+        AudioHub.DEAD_SOUND, 
+        AudioHub.SNOR_SOUND,
+        AudioHub.COIN_SOUND,
+        AudioHub.BOTL_PICK,
+        AudioHub.BOTL_BREAK,
+        AudioHub.CHIC_DEAD,
+        AudioHub.BOSS_DEAD,
+        AudioHub.BOSS_HURT,
+        AudioHub.BOSS_ALERT,
+        AudioHub.BOSS_ATTACK,
+        AudioHub.WIN_SOUND
+    ];
+
+    static isMuted = true;
+
+    /** Schaltet alle registrierten Audios gemeinsam stumm oder frei. @returns {boolean} Aktueller Stummschaltungsstatus. */
+    static toggleMute() {
+        AudioHub.isMuted = !AudioHub.isMuted;
+        AudioHub.allSounds.forEach((sound) => {
+            if (sound &amp;&amp; sound.file) {
+                sound.file.muted = this.isMuted;
+            }
+        });        
+        return AudioHub.isMuted;
+    }
+
+    /** Startet ein Audio ab Position null, sofern eine gueltige Quelle vorliegt. @param {MyAudio} sound Audioobjekt. */
+    static playOne(sound) {
+        if (sound &amp;&amp; sound.file) {
+            sound.file.currentTime = 0;
+            sound.file.volume = 0.3;
+            let playPromise = sound.file.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                });
+            }
+        }
+    }
+
+    /** Pausiert alle registrierten Audioquellen. */
+    static stopAll() {
+        AudioHub.allSounds.forEach((sound) => {
+            if (sound &amp;&amp; sound.file) {
+                sound.file.pause();
+            }
+        });
+    }
+
+    /** Pausiert eine einzelne Audioquelle. @param {MyAudio} sound Audioobjekt. */
+    static stopOne(sound) {
+        if (sound &amp;&amp; sound.file) {
+            sound.file.pause();
+        }
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#init">init</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#level1">level1</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 09:34:33 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

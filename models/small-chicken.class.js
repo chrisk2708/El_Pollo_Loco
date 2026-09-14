@@ -2,6 +2,7 @@ import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
+/** Kleine Variante des Standardgegners mit eigener Groesse und Animation. */
 export class SmallChicken extends MoveableObject {
 
     y = 385;
@@ -15,17 +16,18 @@ export class SmallChicken extends MoveableObject {
         right: 5
     };
 
+    /** Erzeugt einen kleinen Gegner mit zufaelliger Startposition und Geschwindigkeit. */
     constructor() {
         super().loadImage(ImageHub.SMALL_CHICKEN.walk[0]);
         this.loadImages(ImageHub.SMALL_CHICKEN.walk);
         this.loadImages(ImageHub.SMALL_CHICKEN.dead);
-
-        this.x = 200 + Math.random() * 1440;
+        this.x = 200 + Math.random() * 3000;
         this.speed = this.speed + Math.random() * 0.3;
         this.getRealFrame();
         this.animate();
     }
 
+    /** Registriert Bewegung und zustandsabhaengige Animation. */
     animate() {
         IntervalHub.startInterval(() => {
             this.moveLeft();

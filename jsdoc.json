@@ -1,0 +1,16 @@
+{
+  "source": {
+    "include": ["./js", "./models", "./levels"],
+    "includePattern": ".+\\.js$",
+    "excludePattern": "(^|[\\/])_"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
+  }
+}

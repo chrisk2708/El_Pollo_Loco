@@ -2,6 +2,7 @@ import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 
+/** Sammelbare, animierte Muenze des Levels. */
 export class Coin extends DrawableObject {
 
     offset = {
@@ -13,6 +14,7 @@ export class Coin extends DrawableObject {
 
     IMAGES = ImageHub.COIN.coin;
 
+    /** Erzeugt eine Muenze an den angegebenen Weltkoordinaten. @param {number} x Horizontale Position. @param {number} y Vertikale Position. */
     constructor(x, y) {
         super().loadImage(ImageHub.COIN.coin[0]);
         this.loadImages(this.IMAGES);
@@ -24,6 +26,7 @@ export class Coin extends DrawableObject {
         this.animate();
     }
 
+    /** Registriert die zyklische Muenzenanimation. */
     animate() {
         IntervalHub.startInterval(() => {
             this.playAnimation(this.IMAGES);

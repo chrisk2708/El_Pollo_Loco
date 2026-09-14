@@ -2,6 +2,7 @@ import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
+/** Standardgegner, der nach links laeuft und zwischen Lauf- und Todesbildern wechselt. */
 export class Chicken extends MoveableObject {
 
     y = 370;
@@ -15,22 +16,24 @@ export class Chicken extends MoveableObject {
         right: 5
     };
 
+    /** Erzeugt einen Gegner mit zufaelliger Startposition und Geschwindigkeit. */
     constructor() {
         super().loadImage(ImageHub.NORMAL_CHICKEN.walk[0]);
         this.loadImages(ImageHub.NORMAL_CHICKEN.walk);
         this.loadImages(ImageHub.NORMAL_CHICKEN.dead);
 
-        this.x = 200 + Math.random() * 1440;
+        this.x = 200 + Math.random() * 3000;
         this.speed = this.speed + Math.random() * 0.3;
         this.getRealFrame();
         this.animate();
     }
 
+    /** Registriert Bewegung und zustandsabhaengige Animation. */
     animate() {
         IntervalHub.startInterval(() => {
             this.moveLeft();
         }, 1000 / 60);
-
+        
         IntervalHub.startInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(ImageHub.NORMAL_CHICKEN.dead);

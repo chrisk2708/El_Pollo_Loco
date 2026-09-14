@@ -1,5 +1,6 @@
 import { MoveableObject } from "./moveable-object.class.js";
 
+/** Statisches beziehungsweise scrollendes Hintergrundbild eines Levelabschnitts. */
 export class BackgroundObject extends MoveableObject {
 
     x;
@@ -10,16 +11,10 @@ export class BackgroundObject extends MoveableObject {
     static xPos = -960;
     static turn = 0;
 
+    /** Erzeugt ein Hintergrundobjekt an einer Weltposition. @param {string} path Bildpfad. @param {number} x Horizontale Position. */
     constructor(path, x) {
-        // if (BackgroundObject.turn === 4) {
-        //     BackgroundObject.xPos += 960;
-        //     BackgroundObject.turn = 0;
-        // }
-
         super();
         this.x = x;
         super.loadImage(path);
-        // this.x = BackgroundObject.xPos;
-        // BackgroundObject.turn++;
     }
 }

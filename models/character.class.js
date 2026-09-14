@@ -4,6 +4,7 @@ import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
+/** Steuerbarer Spielercharakter mit Bewegung, Animation, Kamera und Sounds. */
 export class Character extends MoveableObject {
     y = 130;
     height = 300;
@@ -25,6 +26,7 @@ export class Character extends MoveableObject {
         right: 20
     };
     
+    /** Laedt alle Charakteranimationen und startet Gravitation sowie Spielschleifen. */
     constructor() {
         super().loadImage(ImageHub.PEPE.idle[0]);
         this.loadImages(ImageHub.PEPE.idle);
@@ -36,112 +38,147 @@ export class Character extends MoveableObject {
         this.getRealFrame();
         this.applyGravity();
         this.animate();
-        console.log(this);
     }
 
+    /** Registriert die unabhaengigen Bewegungs-, Animations- und Sound-Timer. */
     animate() {
-        // Bewegungs- und Eingabe-Schleife (60 FPS)
-        IntervalHub.startInterval(() => {
-            if (Keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.moveRight();
-                this.otherDirection = false;
-            }
-            if (Keyboard.LEFT && this.x > 0) {
-                this.moveLeft();
-                this.otherDirection = true;
-            }
+        this.registerMovement();
+        this.registerAnimation();
+        this.registerWalkSound();
+        this.registerDeathSound();
+        this.registerHurtSound();
+        this.registerSnoreSound();
+    }
 
-            if (Keyboard.SPACE && !this.isAboveGround()) {
-                this.speedY = 30;
-                if (!this.isJumpSoundPlayed) {
-                    this.isJumpSoundPlayed
-                    AudioHub.playOne(AudioHub.JUMP_SOUND);
-                }
-            }
-            if (!this.isAboveGround()) {
-                this.isJumpSoundPlayed = false;
-            }
-            this.camera_x = -this.x + 120;
-            this.camera_x = Math.max(-1700, this.camera_x);
-        }, 1000 / 60);
+    /** Registriert die Aktualisierung der Spielerbewegung. */
+    registerMovement() {
+        IntervalHub.startInterval(() => this.updateMovement(), 1000 / 60);
+    }
 
-        // Animations- und Status-Schleife
-        IntervalHub.startInterval(() => {
-            let timePassed = (new Date().getTime() - this.idleTimeStamp) / 1000;
+    /** Verarbeitet Eingaben und positioniert die Kamera relativ zum Charakter. */
+    updateMovement() {
+        this.handleHorizontalMovement();
+        this.handleJump();
+        this.camera_x = Math.max(-1700, -this.x + 120);
+    }
 
-            if (this.isDead()) {
-                this.playAnimation(ImageHub.PEPE.dead);
-            } else if (this.isHurt()) {
-                this.playAnimation(ImageHub.PEPE.hurt);
-                this.idleTimeStamp = new Date().getTime();
-            } else if (this.isAboveGround()) {
-                this.playAnimation(ImageHub.PEPE.jump);
-            } else if (Keyboard.RIGHT || Keyboard.LEFT) {
-                this.playAnimation(ImageHub.PEPE.walk);
-                this.idleTimeStamp = new Date().getTime();
-            } else {
-                // Idle oder Long Idle
-                if (timePassed > 10) {
-                    if (!this.isLongIdle) {
-                        this.isLongIdle = true;
-                    }
-                    this.playAnimation(ImageHub.PEPE.longIdle);
-                } else {
-                    this.isLongIdle = false;
-                    this.playAnimation(ImageHub.PEPE.idle);
-                }
-            }
-        }, 250);
+    /** Bewegt den Charakter anhand der linken und rechten Eingabe. */
+    handleHorizontalMovement() {
+        if (Keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+        }
+        if (Keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+        }
+    }
 
-        // Sound-Interval für Laufgeräusch (sauber entkoppelt ohne doppelte Auslöser)
-        IntervalHub.startInterval(() => {
-            let walkSoundPlay = (Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround() && !this.isDead();
+    /** Loest einen Sprung aus und steuert die Sprungton-Wiederholung. */
+    handleJump() {
+        if (Keyboard.SPACE && !this.isAboveGround()) {
+            this.speedY = 30;
+            this.playJumpSound();
+        }
+        if (!this.isAboveGround()) this.isJumpSoundPlayed = false;
+    }
 
-            if (walkSoundPlay) {
-                if (!this.isWalkingPlaying && !AudioHub.isMuted) {
-                    this.isWalkingPlaying = true;
-                    AudioHub.WALK_SOUND.file.currentTime = 0;
-                    AudioHub.WALK_SOUND.file.play().catch(() => {});
-                }
-            } else {
-                if (this.isWalkingPlaying) {
-                    this.isWalkingPlaying = false;
-                    AudioHub.WALK_SOUND.file.pause();
-                }
-            }
-        }, 50);
+    /** Spielt den Sprungton hoechstens einmal pro Sprung ab. */
+    playJumpSound() {
+        if (this.isJumpSoundPlayed) return;
+        this.isJumpSoundPlayed = true;
+        AudioHub.playOne(AudioHub.JUMP_SOUND);
+    }
 
-        // Sound-Interval für Tod
-        IntervalHub.startInterval(() => {
-            if (this.isDead() && !this.hasPlayedDeathSound) {
-                this.hasPlayedDeathSound = true;
-                if (!AudioHub.isMuted) {
-                    AudioHub.playOne(AudioHub.DEAD_SOUND);
-                }
-                // Lauf-Sound direkt stoppen, falls er lief
-                if (this.isWalkingPlaying) {
-                    this.isWalkingPlaying = false;
-                    AudioHub.WALK_SOUND.file.pause();
-                }
-            }
-        }, 200);
+    /** Registriert die regelmaessige Aktualisierung der Charakteranimation. */
+    registerAnimation() {
+        IntervalHub.startInterval(() => this.updateAnimation(), 250);
+    }
 
-        // Sound-Interval für Treffer (Schaden)
-        IntervalHub.startInterval(() => {
-            if (this.isHurt() && !this.isDead()) {
-                if (!AudioHub.isMuted) {
-                    AudioHub.playOne(AudioHub.HURT_SOUND);
-                }
-            }
-        }, 200);
+    /** Waehlt die Animation anhand von Tod, Schaden, Sprung, Bewegung oder Idle-Zeit. */
+    updateAnimation() {
+        const timePassed = (Date.now() - this.idleTimeStamp) / 1000;
+        if (this.isDead()) return this.playAnimation(ImageHub.PEPE.dead);
+        if (this.isHurt()) return this.setAnimation(ImageHub.PEPE.hurt);
+        if (this.isAboveGround()) return this.playAnimation(ImageHub.PEPE.jump);
+        if (Keyboard.RIGHT || Keyboard.LEFT) return this.setAnimation(ImageHub.PEPE.walk);
+        this.setIdleAnimation(timePassed);
+    }
 
-        // Sound-Interval für Schnarchen im Long-Idle
-        IntervalHub.startInterval(() => {
-            if (this.isLongIdle && !this.isAboveGround() && !this.isDead()) {
-                if (!AudioHub.isMuted) {
-                    AudioHub.playOne(AudioHub.SNOR_SOUND);
-                }
-            }
-        }, 3500);
+    /** Setzt eine Animation und beendet den bisherigen Idle-Zeitabschnitt. @param {string[]} images Animationspfade. */
+    setAnimation(images) {
+        this.idleTimeStamp = Date.now();
+        this.playAnimation(images);
+    }
+
+    /** Waehlt kurze oder lange Idle-Animation. @param {number} timePassed Sekunden seit letzter Aktivitaet. */
+    setIdleAnimation(timePassed) {
+        this.isLongIdle = timePassed > 10;
+        const images = this.isLongIdle ? ImageHub.PEPE.longIdle : ImageHub.PEPE.idle;
+        this.playAnimation(images);
+    }
+
+    /** Registriert die Pruefung fuer den Lauf-Sound. */
+    registerWalkSound() {
+        IntervalHub.startInterval(() => this.updateWalkSound(), 50);
+    }
+
+    /** Startet oder beendet den Lauf-Sound passend zum Bewegungszustand. */
+    updateWalkSound() {
+        const shouldPlay = (Keyboard.RIGHT || Keyboard.LEFT)
+            && !this.isAboveGround() && !this.isDead();
+        if (shouldPlay) return this.startWalkSound();
+        this.stopWalkSound();
+    }
+
+    /** Startet den geloopten Lauf-Sound, sofern Audio aktiv ist. */
+    startWalkSound() {
+        if (this.isWalkingPlaying || AudioHub.isMuted) return;
+        this.isWalkingPlaying = true;
+        AudioHub.WALK_SOUND.file.currentTime = 0;
+        AudioHub.WALK_SOUND.file.play().catch(() => {});
+    }
+
+    /** Pausiert den Lauf-Sound und setzt dessen Status zurueck. */
+    stopWalkSound() {
+        if (!this.isWalkingPlaying) return;
+        this.isWalkingPlaying = false;
+        AudioHub.WALK_SOUND.file.pause();
+    }
+
+    /** Registriert die Pruefung fuer den einmaligen Todessound. */
+    registerDeathSound() {
+        IntervalHub.startInterval(() => this.updateDeathSound(), 200);
+    }
+
+    /** Spielt den Todessound einmal ab und beendet den Lauf-Sound. */
+    updateDeathSound() {
+        if (!this.isDead() || this.hasPlayedDeathSound) return;
+        this.hasPlayedDeathSound = true;
+        if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.DEAD_SOUND);
+        this.stopWalkSound();
+    }
+
+    /** Registriert die periodische Schadenston-Pruefung. */
+    registerHurtSound() {
+        IntervalHub.startInterval(() => this.playHurtSound(), 200);
+    }
+
+    /** Spielt bei aktivem Schaden den Treffer-Sound ab. */
+    playHurtSound() {
+        if (this.isHurt() && !this.isDead() && !AudioHub.isMuted) {
+            AudioHub.playOne(AudioHub.HURT_SOUND);
+        }
+    }
+
+    /** Registriert die Pruefung fuer den Idle-Schnarchsound. */
+    registerSnoreSound() {
+        IntervalHub.startInterval(() => this.playSnoreSound(), 3500);
+    }
+
+    /** Spielt bei langem, bodengebundenem Idle den Schnarchsound ab. */
+    playSnoreSound() {
+        const canSnore = this.isLongIdle && !this.isAboveGround() && !this.isDead();
+        if (canSnore && !AudioHub.isMuted) AudioHub.playOne(AudioHub.SNOR_SOUND);
     }
 }

@@ -1,7 +1,7 @@
 import { MyAudio } from "./audio.class.js";
 
+/** Zentrale statische Verwaltung aller Spiel-Audios und ihrer Wiedergabe. */
 export class AudioHub {
-    // Audiodateien
     static GAME_SOUND = new MyAudio('./assets/audio/background_music.mp3', true);
     static WALK_SOUND = new MyAudio('./assets/audio/walking.mp3', true);
     static JUMP_SOUND = new MyAudio('./assets/audio/jump.mp3', false);
@@ -20,7 +20,6 @@ export class AudioHub {
     static WIN_SOUND = new MyAudio('./assets/audio/win.mp3', false);
     static GAME_OVER = new MyAudio('', false);
 
-    // Array, mit allen Audio-Dateien
     static allSounds = [
         AudioHub.GAME_SOUND, 
         AudioHub.WALK_SOUND, 
@@ -39,10 +38,9 @@ export class AudioHub {
         AudioHub.WIN_SOUND
     ];
 
-    // Stummschaltung
     static isMuted = true;
 
-    // Schaltet den Mute-Status um
+    /** Schaltet alle registrierten Audios gemeinsam stumm oder frei. @returns {boolean} Aktueller Stummschaltungsstatus. */
     static toggleMute() {
         AudioHub.isMuted = !AudioHub.isMuted;
         AudioHub.allSounds.forEach((sound) => {
@@ -53,7 +51,7 @@ export class AudioHub {
         return AudioHub.isMuted;
     }
 
-    // Spielt eine einzelne Audiodatei ab (mit Promise-Catch gegen AbortError)
+    /** Startet ein Audio ab Position null, sofern eine gueltige Quelle vorliegt. @param {MyAudio} sound Audioobjekt. */
     static playOne(sound) {
         if (sound && sound.file) {
             sound.file.currentTime = 0;
@@ -61,13 +59,12 @@ export class AudioHub {
             let playPromise = sound.file.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    // Fängt den AbortError ab, wenn Sounds unterbrochen werden
                 });
             }
         }
     }
 
-    // Stoppt das Abspielen aller Audiodateien
+    /** Pausiert alle registrierten Audioquellen. */
     static stopAll() {
         AudioHub.allSounds.forEach((sound) => {
             if (sound && sound.file) {
@@ -76,16 +73,10 @@ export class AudioHub {
         });
     }
 
-    // Stoppt das Abspielen einer einzelnen Audiodatei
+    /** Pausiert eine einzelne Audioquelle. @param {MyAudio} sound Audioobjekt. */
     static stopOne(sound) {
         if (sound && sound.file) {
             sound.file.pause();
         }
     }
 }
-
-AudioHub.allSounds.forEach((sound) => {
-    if (sound && sound.file) {
-        sound.file.muted = AudioHub.isMuted;
-    }
-});

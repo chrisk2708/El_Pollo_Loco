@@ -1,8 +1,10 @@
 import { IntervalHub } from './interval-hub.class.js';
 import { MoveableObject } from './moveable-object.class.js';
 
+/** Animierte Wolke, die kontinuierlich nach links durch die Welt zieht. */
 export class Cloud extends MoveableObject {
 
+    /** Erzeugt eine Wolke mit Bild und Startposition. @param {string} imagePath Bildpfad. @param {number} x Horizontale Position. */
     constructor(imagePath, x) {
         super().loadImage(imagePath);
         this.x = x;
@@ -19,6 +21,7 @@ export class Cloud extends MoveableObject {
         this.animate();
     }
 
+    /** Registriert die Bewegung und setzt die Wolke nach dem Verlassen der Welt zurueck. */
     animate() {
         IntervalHub.startInterval(() => {
             this.moveLeft();
