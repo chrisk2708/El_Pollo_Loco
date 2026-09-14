@@ -71,15 +71,6 @@ export class World {
         });
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObjects);
-        this.drawCollisionFrames();
-    }
-
-    /** Zeichnet Debug-Rahmen fuer Charakter und Gegner. */
-    drawCollisionFrames() {
-        this.character.drawFrame(this.ctx);
-        this.character.drawCollideFrame(this.ctx);
-        this.level.enemies.forEach(enemy => enemy.drawCollideFrame(this.ctx));
-        this.character.getRealFrame();
     }
 
     /** Zeichnet alle HUD-Statusleisten ohne Kameratransformation. */
@@ -100,7 +91,6 @@ export class World {
         if (this.isAnimatedObject(mo)) mo.getRealFrame();
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
-        if (this.isAnimatedObject(mo)) this.drawObjectFrames(mo);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 
@@ -109,12 +99,6 @@ export class World {
         return mo instanceof Character || mo instanceof Chicken || mo instanceof SmallChicken
             || mo instanceof Endboss || mo instanceof Coin || mo instanceof SalsaBottle
             || mo instanceof ThrowableObject;
-    }
-
-    /** Zeichnet die beiden Debug-Rahmen eines beweglichen Objekts. @param {DrawableObject} mo Objekt. */
-    drawObjectFrames(mo) {
-        mo.drawFrame(this.ctx);
-        mo.drawCollideFrame(this.ctx);
     }
 
     /** Spiegelt den Zeichenkontext und die Objektposition horizontal. @param {DrawableObject} mo Objekt. */

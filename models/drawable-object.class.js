@@ -30,30 +30,12 @@ export class DrawableObject {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
-    /** Zeichnet den aeusseren Debug-Rahmen des Objekts. @param {CanvasRenderingContext2D} ctx Zeichenkontext. */
-    drawFrame(ctx) {
-        ctx.beginPath();
-        ctx.lineWidth = '2 ';
-        ctx.strokeStyle = 'blue';
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
-    }
-
     /** Berechnet den fuer Kollisionen verwendeten Rahmen unter Beruecksichtigung des Offsets. */
     getRealFrame() {
         this.rX = this.x + this.offset.left;
         this.rY = this.y + this.offset.top;
         this.rW = this.width - this.offset.left - this.offset.right;
         this.rH = this.height - this.offset.top - this.offset.bottom;
-    }
-
-    /** Zeichnet den Kollisionsrahmen zu Debug-Zwecken. @param {CanvasRenderingContext2D} ctx Zeichenkontext. */
-    drawCollideFrame(ctx) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = 'red';
-            ctx.rect(this.rX, this.rY, this.rW, this.rH);
-            ctx.stroke();
     }
 
     /** Wechselt zyklisch zum naechsten Bild einer Animation. @param {string[]} images Animationspfade. */
