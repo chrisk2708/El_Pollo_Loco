@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./assets/img/icons/fav-sombrero.png" type="image/x-icon">
+    <link rel="icon" href="./assets/img/icons/fav-sombrero.png" type="image/png">
     <link rel="stylesheet" href="./styles/standard.css">
     <link rel="stylesheet" href="./styles/font.css">
     <link rel="stylesheet" href="./style.css">
     <title>El Pollo Loco</title>
-    <script type="module" src="js/game.js" defer></script>
+    <script type="module" src="js/game.js"></script>
 </head>
 <body>
     <section id="mainContent" class="main-content">
         <canvas id="canvas" width="960" height="480"></canvas>
-        
+
         <div id="startScreen" class="startscreen">
             <button id="startBtn">Spiel starten</button>
             <button id="optBtnStart">Optionen</button>
         </div>
 
         <div id="ingameOpt" class="ingame-options d-none">
-            <button id="optBtnOverlay"><img src="./assets/img/icons/settings.png" alt="Option Icon"></i></button>
-            <button id="audioBtn"><img src="./assets/img/icons/stumm.png" alt="Audio Icon"></i></button>
+            <button id="optBtnOverlay" aria-label="Optionen"><img src="./assets/img/icons/settings.png" alt="Optionen"></button>
+            <button id="audioBtn" aria-label="Ton an/aus"><img src="./assets/img/icons/stumm.png" alt="Ton an/aus"></button>
         </div>
 
         <div id="optModal" class="optModal d-none">
+            <button class="close-x" data-close-options aria-label="Schließen">X</button>
             <button id="startBtnOpt">Neu Starten</button>
             <button id="controlDescriptionBtn">Steuerung</button>
             <button id="gameDescriptionBtn">Spielerklärung</button>
-            <button id="creditsButton">Impressum</button>
-            <button style="margin-top: 40px;" id="closeOptModalBtn">zurück</button>
-            <button style="margin-top: 40px;" id="closeOptBtnIngame" class="d-none">zurück</button>
+            <a class="button-link" href="./imprint.html" target="_blank">Impressum</a>
+            <button class="back-btn" data-close-options>zurück</button>
         </div>
 
         <div id="gameOverScreen" class="gameOverScreen d-none">
@@ -40,74 +40,55 @@
 
         <div id="rotateDeviceMsg" class="rotateDeviceMsg d-none">
             <h2>Bitte drehe dein Gerät um 90°, um das Spiel starten zu können.</h2>
-            <img src="./assets/img/icons/rotate_white.png" alt="rotate phone icon">
+            <img src="./assets/img/icons/rotate_white.png" alt="Gerät drehen">
         </div>
 
         <div id="mobileButtons" class="mobileButtons d-none">
             <div class="left-mobileButtons">
-                <button id="walkLeftButton"><img src="./assets/img/icons/mobile_left.png" alt=""></button>
-                <button id="walkRightButton"><img src="./assets/img/icons/mobile_right.png" alt=""></button>
+                <button id="walkLeftButton" aria-label="Links"><img src="./assets/img/icons/mobile_left.png" alt="" draggable="false"></button>
+                <button id="walkRightButton" aria-label="Rechts"><img src="./assets/img/icons/mobile_right.png" alt="" draggable="false"></button>
             </div>
             <div class="right-mobileButtons">
-                <button id="jumpButton"><img src="./assets/img/icons/mobile_jump.png" alt=""></button>
-                <button id="throwButton"><img src="./assets/img/icons/mobile_throw.png" alt=""></button>
+                <button id="jumpButton" aria-label="Springen"><img src="./assets/img/icons/mobile_jump.png" alt="" draggable="false"></button>
+                <button id="throwButton" aria-label="Flasche werfen"><img src="./assets/img/icons/mobile_throw.png" alt="" draggable="false"></button>
             </div>
         </div>
 
         <div id="controlDescription" class="optModal controlDescription d-none">
+            <button class="close-x" data-close-dialog="controlDescription" aria-label="Schließen">X</button>
             <div class="control-keys">
-                <h2>Links:</h2><img src="./assets/img/icons/pfeil-links.png" alt="" id="walkLeftButton-image">
+                <h2>Links:</h2><img src="./assets/img/icons/pfeil-links.png" alt="Pfeiltaste links" id="walkLeftButton-image">
             </div>
             <div class="control-keys">
-                <h2>Rechts:</h2><img src="./assets/img/icons/pfeil-rechts.png" alt="" id="walkRightButton-image">
+                <h2>Rechts:</h2><img src="./assets/img/icons/pfeil-rechts.png" alt="Pfeiltaste rechts" id="walkRightButton-image">
             </div>
             <div class="control-keys">
-                <h2>Springen:</h2><img src="./assets/img/icons/space.png" alt="" id="jumpButton-image">
+                <h2>Springen:</h2><img src="./assets/img/icons/space.png" alt="Leertaste" id="jumpButton-image">
             </div>
             <div class="control-keys">
-                <h2>Flasche werfen:</h2><img src="./assets/img/icons/buchstabe-b.png" alt="" id="throwButton-image">
+                <h2>Flasche werfen:</h2><img src="./assets/img/icons/buchstabe-b.png" alt="Taste B" id="throwButton-image">
             </div>
-            <button style="margin-top: 40px;" id="closeCtrlDescBtn">zurück</button>
+            <button class="back-btn" data-close-dialog="controlDescription">zurück</button>
         </div>
 
         <div id="gameDescription" class="optModal controlDescription d-none">
+            <button class="close-x" data-close-dialog="gameDescription" aria-label="Schließen">X</button>
             <p>Es gibt 3 unterschiedliche Gegner: <br> Kleine Hühnchen, normale Hühnchen und einen Endgegner.
                 Kleine und normale Hühnchen können mit einem Sprung von oben getötet werden. Der Endgegner kann
                 nur getötet werden, indem man ihn mit den Flaschen abwirft, die überall im Spiel verteilt sind und
                 eingesammelt werden können.
-                Es ist auch möglich mit den Flaschen die anderen Gegner zu töten, allerdings sollte darauf geachtet
-                werden, noch
-                ausreichend viele Flaschen für den Endgegner zu haben.
+                Es ist auch möglich, mit den Flaschen die anderen Gegner zu töten, allerdings sollte darauf geachtet
+                werden, noch ausreichend viele Flaschen für den Endgegner zu haben.
             </p>
-            <button style="margin-top: 20px;" id="closeGameDescriptionBtn">zurück</button>
-        </div>
-
-        <div id="credits" class="imprint optModal controlDescription d-none" style="font-family: sans-serif;">
-            <h1>Impressum</h1>
-            <h2>Angaben gemäß §5 DDG:</h2>
-            <p><br>Christian Sobotta</p>
-            <h3>Postanschrift:</h3>
-            <p>Platzhalter Straße 1<br>01234 Diesestadt<br></p>
-            <h3>Kontakt:</h3>
-            <p>E-Mail: chris.k2708@gmail.com</p>
-            <h3>Vertreten durch:</h3>
-            <p>Christian Sobotta<br></p>
-            <h2>Hinweise zur Website</h2>
-            <h3>Weiterbildung zum Fullstack Entwickler bei:</h3>
-            <p>Developer Akademie GmbH <br />Tassiloplatz 25<br />81541 München <br /><br />
-			HRB 269921, AG München <br /></p>
-            <h3>Geschäftsführung:</h3>
-			<span>Linus Kauer, Arno Müller, Manuel Hinz</span><br />
-			<p>E-Mail: info@developerakademie.com <br /><br /></p>
-            <button style="margin-top: 20px;" id="closeCreditsBtn">zurück</button>
+            <button class="back-btn" data-close-dialog="gameDescription">zurück</button>
         </div>
     </section>
     <footer id="footer">
-            <div>&copy; 2026 El Pollo Loco</div>
-            <div>
-                <div><a href="#credits">Impressum</a></div>
-                <div><a href="https://github.com/chrisk2708/El_Pollo_Loco" target="_blank">GitHub</a></div>
-            </div>
-        </footer>
+        <div>&copy; 2026 El Pollo Loco</div>
+        <div>
+            <div><a href="./imprint.html">Impressum</a></div>
+            <div><a href="https://github.com/chrisk2708/El_Pollo_Loco" target="_blank">GitHub</a></div>
+        </div>
+    </footer>
 </body>
 </html>
