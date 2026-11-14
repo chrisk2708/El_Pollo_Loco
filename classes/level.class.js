@@ -9,7 +9,7 @@ export class Level {
     collectibles;
     clouds = [];
     backgroundObjects = [];
-    level_end_x = 3200;
+    levelEndX = 3200;
     step = 960;
 
     /** Erzeugt ein Level und baut dessen Hintergrund anhand der Abschnittszahl auf. @param {number} sections Anzahl der Hintergrundabschnitte. @param {MoveableObject[]} enemies Gegnerliste. @param {DrawableObject[]} collectibles Sammelobjekte. */

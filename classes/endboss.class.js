@@ -1,18 +1,18 @@
 import { AudioHub } from "./audio-hub.class.js";
 import { ImageHub } from "./img-hub.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
-/** Endgegner mit Distanzsteuerung, Zustandsanimationen und Sieg-Seiteneffekt. */
+/** Endgegner, der Pepe ab einer bestimmten Distanz verfolgt und angreift. */
 export class Endboss extends MoveableObject {
-
     height = 450;
     width = 350;
     y = 10;
-    world;
+    speed = 2.5;
+    state = 'alert';
+    hasAlerted = false;
 
     offset = {
-        top: 80,  
+        top: 80,
         bottom: 20,
         left: 30,
         right: 15
@@ -20,56 +20,45 @@ export class Endboss extends MoveableObject {
 
     /** Laedt die Bossanimationen und startet die Animationsschleife. */
     constructor() {
-        super();
-        this.loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
-        this.loadImages(ImageHub.BOSS_CHICKEN.walk);
-        this.loadImages(ImageHub.BOSS_CHICKEN.alert);
-        this.loadImages(ImageHub.BOSS_CHICKEN.attack);
-        this.loadImages(ImageHub.BOSS_CHICKEN.hurt);
-        this.loadImages(ImageHub.BOSS_CHICKEN.dead);
+        super().loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
+        Object.values(ImageHub.BOSS_CHICKEN).forEach(images => this.loadImages(images));
         this.x = 2500;
         this.getRealFrame();
-        this.animate();
+        this.registerInterval(() => this.updateAnimation(), 200);
     }
 
-    /** Registriert die zeitgesteuerte Bossanimationsaktualisierung. */
-    animate() {
-        IntervalHub.startInterval(() => this.updateAnimation(), 500);
+    /**
+     * Richtet den Boss auf Pepe aus und waehlt zwischen Warten, Verfolgen und Angreifen.
+     * @param {Character} character Spielercharakter.
+     */
+    followCharacter(character) {
+        if (this.isDead() || character.isDead()) return;
+        const distance = Math.abs(character.x - this.x);
+        this.otherDirection = character.x > this.x;
+        if (distance > 800) {
+            this.state = 'alert';
+            return;
+        }
+        this.playAlertSoundOnce();
+        this.state = distance < 250 ? 'attack' : 'walk';
+        if (this.isHurtEndboss()) return;
+        this.x += character.x < this.x ? -this.speed : this.speed;
     }
 
-    /** Waehlt Todes-, Treffer-, Angriffs-, Alarm- oder Laufanimation. */
+    /** Spielt beim ersten Kontakt einmalig den Alarm- und Angriffsschrei. */
+    playAlertSoundOnce() {
+        if (this.hasAlerted) return;
+        this.hasAlerted = true;
+        AudioHub.playOne(AudioHub.BOSS_ALERT);
+        setTimeout(() => AudioHub.playOne(AudioHub.BOSS_ATTACK), 1200);
+    }
+
+    /** Waehlt Todes-, Treffer-, Angriffs-, Lauf- oder Alarmanimation. */
     updateAnimation() {
-        if (this.isDead()) return this.playDeadAnimation();
-        if (this.isHurtEndboss()) return this.playHurtAnimation();
-        if (this.speed === 2.5) return this.playAnimation(ImageHub.BOSS_CHICKEN.attack);
-        if (this.speed === 0) return this.playAnimation(ImageHub.BOSS_CHICKEN.alert);
-        this.playWalkAnimation();
-    }
-
-    /** Spielt die Todesanimation, markiert den Sieg und loest den Todessound aus. */
-    playDeadAnimation() {
-        this.speed = 0;
-        this.playAnimation(ImageHub.BOSS_CHICKEN.dead);
-        world.win = true;
-        this.playDeathSound();
-    }
-
-    /** Spielt die Trefferanimation und stoppt voruebergehend die Bewegung. */
-    playHurtAnimation() {
-        this.speed = 0;
-        this.playAnimation(ImageHub.BOSS_CHICKEN.hurt);
-    }
-
-    /** Spielt die Laufanimation und setzt die normale Bossgeschwindigkeit. */
-    playWalkAnimation() {
-        this.playAnimation(ImageHub.BOSS_CHICKEN.walk);
-        this.speed = 0.5;
-    }
-
-    /** Spielt den Boss-Todessound einmalig ab. */
-    playDeathSound() {
-        if (this.isDeadSoundPlayed) return;
-        AudioHub.playOne(AudioHub.BOSS_DEAD);
-        this.isDeadSoundPlayed = true;
+        if (this.isDead()) return this.playAnimationOnce(ImageHub.BOSS_CHICKEN.dead);
+        if (this.isHurtEndboss()) return this.playAnimation(ImageHub.BOSS_CHICKEN.hurt);
+        if (this.state === 'attack') return this.playAnimation(ImageHub.BOSS_CHICKEN.attack);
+        if (this.state === 'walk') return this.playAnimation(ImageHub.BOSS_CHICKEN.walk);
+        this.playAnimation(ImageHub.BOSS_CHICKEN.alert);
     }
 }

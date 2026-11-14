@@ -1,27 +1,31 @@
 import { ImageHub } from "./img-hub.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
 /** Geworfene Salsa-Flasche mit Flug-, Rotations- und Spritzanimation. */
 export class ThrowableObject extends MoveableObject {
-
     height = 60;
     width = 50;
     speed = 15;
+    isBroken = false;
 
     offset = {
-        top: 5,  
+        top: 5,
         bottom: 5,
         left: 5,
         right: 5
     };
 
-    /** Erzeugt und startet eine Flasche. @param {number} x Startposition. @param {number} y Starthoehe. @param {boolean} direction Blickrichtung des Spielers. */
+    /**
+     * Erzeugt und startet eine Flasche.
+     * @param {number} x Startposition.
+     * @param {number} y Starthoehe.
+     * @param {boolean} direction Blickrichtung des Spielers (true = links).
+     */
     constructor(x, y, direction) {
         super().loadImage(ImageHub.BOTTLE.rotation[0]);
         this.loadImages(ImageHub.BOTTLE.rotation);
         this.loadImages(ImageHub.BOTTLE.splash);
-        this.x = x;    
+        this.x = x;
         this.y = y;
         this.otherDirection = direction;
         this.getRealFrame();
@@ -32,52 +36,43 @@ export class ThrowableObject extends MoveableObject {
     throw() {
         this.speedY = 26;
         this.applyGravity();
-        this.startMovement();
-        this.startAnimation();
+        this.registerInterval(() => this.moveBottle(), 1000 / 30);
+        this.registerInterval(() => this.updateAnimation(), 80);
     }
 
-    /** Registriert die horizontale Flugbewegung. */
-    startMovement() {
-        IntervalHub.startInterval(() => {
-            this.moveBottle();
-        }, 1000 / 30);
-    }
-
-    /** Verschiebt die Flasche in ihre Flugrichtung. */
+    /** Verschiebt die Flasche in ihre Flugrichtung, solange sie nicht zerbrochen ist. */
     moveBottle() {
-        const direction = this.otherDirection ? -1 : 1;
-        this.x += direction * this.speed;
+        if (this.isBroken) return;
+        this.x += (this.otherDirection ? -1 : 1) * this.speed;
         this.getRealFrame();
-    }
-
-    /** Registriert die regelmaessige Animationsaktualisierung. */
-    startAnimation() {
-        IntervalHub.startInterval(() => {
-            this.updateAnimation();
-        }, 100);
     }
 
     /** Waehlt Flug- oder Spritzanimation anhand des Flaschenzustands. */
     updateAnimation() {
-        if (this.y >= 340 || this.bottleHitEnemy) return this.splashBottle();
+        if (this.isBroken) return this.playAnimationOnce(ImageHub.BOTTLE.splash);
         this.playAnimation(ImageHub.BOTTLE.rotation);
     }
 
-    /** Stoppt die Flasche und spielt die Spritzanimation ab. */
-    splashBottle() {
-        this.speedY = 0;
+    /** Stoppt die Flasche an Ort und Stelle, damit die Spritzanimation dort ablaeuft. */
+    break() {
+        this.isBroken = true;
         this.speed = 0;
-        this.playAnimation(ImageHub.BOTTLE.splash);
-        setTimeout(() => this.bottleHitEnemy = false, 200);
-    }
-    
-    /** Ueberschreibt die Bodenpruefung fuer die geworfene Flasche. @returns {boolean} Immer wahr waehrend des Flaschenlebens. */
-    isAboveGround() {
-        return true;
+        this.speedY = 0;
     }
 
-    /** Erlaubt Trefferpruefungen ohne weitere Zeitverzoegerung. @returns {boolean} Immer wahr. */
-    checkLastThrow() {
-        return true;
+    /**
+     * Prueft, ob die Flasche den Boden erreicht hat.
+     * @returns {boolean} Bodenkontakt.
+     */
+    hasHitGround() {
+        return this.y >= 340;
+    }
+
+    /**
+     * Eine fliegende Flasche faellt immer weiter; erst beim Zerbrechen stoppt die Gravitation.
+     * @returns {boolean} Ob die Gravitation weiter wirken soll.
+     */
+    isAboveGround() {
+        return !this.isBroken;
     }
 }

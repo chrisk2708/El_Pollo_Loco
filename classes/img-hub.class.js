@@ -209,20 +209,20 @@ export class ImageHub {
 	static INTRO_OUTRO_SCREENS = {
 		start: ["./assets/img/9_intro_outro_screens/start/startscreen_1.png"],
 		won: [
-			"./assets/img/You won, you lost/You Win A.png",
-			"./assets/img/You won, you lost/You win B.png",
-			"./assets/img/You won, you lost/You won A.png",
-			"./assets/img/You won, you lost/You Won B.png",
+			"./assets/img/9_intro_outro_screens/end/you_win_a.png",
+			"./assets/img/9_intro_outro_screens/end/you_win_b.png",
+			"./assets/img/9_intro_outro_screens/end/you_won_a.png",
+			"./assets/img/9_intro_outro_screens/end/you_won_b.png",
 		],
 		lost: [
-			"./assets/img/9_intro_outro_screens/game_over/game over!.png",
-			"./assets/img/9_intro_outro_screens/game_over/game over.png",
-			"./assets/img/9_intro_outro_screens/game_over/oh no you lost!.png",
-			"./assets/img/9_intro_outro_screens/game_over/you lost.png",
-			"./assets/img/You won, you lost/Game over A.png",
-			"./assets/img/You won, you lost/Game Over.png",
-			"./assets/img/You won, you lost/You lost b.png",
-			"./assets/img/You won, you lost/You lost.png",
+			"./assets/img/9_intro_outro_screens/end/game_over_b.png",
+			"./assets/img/9_intro_outro_screens/end/game_over_a.png",
+			"./assets/img/9_intro_outro_screens/end/you_lost_a.png",
+			"./assets/img/9_intro_outro_screens/end/you_lost_b.png",
+			"./assets/img/9_intro_outro_screens/game_over/game_over.png",
+			"./assets/img/9_intro_outro_screens/game_over/game_over_exclamation.png",
+			"./assets/img/9_intro_outro_screens/game_over/oh_no_you_lost.png",
+			"./assets/img/9_intro_outro_screens/game_over/you_lost.png",
 		],
 	};
 }

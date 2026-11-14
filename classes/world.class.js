@@ -1,6 +1,5 @@
 import { level1 } from "../levels/level1.js";
 import { Character } from "./character.class.js";
-import { Chicken } from "./normal-chicken.class.js";
 import { Endboss } from "./endboss.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
@@ -10,13 +9,13 @@ import { SalsaBottle } from "./salsa-bottle.class.js";
 import { StatusBar } from "./statusbar.class.js";
 import { AudioHub } from "./audio-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
+import { ImageHub } from "./img-hub.class.js";
 
 /** Zentrale Spielwelt fuer Rendering, Kollisionen, Sammelobjekte und Spielende. */
 export class World {
     ctx;
     canvas;
-    camera_x = 0;
-    muted = false;
+    level;
     character = new Character();
     statusbarBottles = new StatusBar("bottles", 10, 0, 0);
     statusbarHealth = new StatusBar("health", 10, 40);
@@ -24,84 +23,95 @@ export class World {
     statusbarEndboss = new StatusBar("endBoss", 740, 0);
     coins = 0;
     bottles = 0;
-    level;
+    totalCoins = 1;
+    totalBottles = 1;
     throwableObjects = [];
-    isThrow = false;
-    otherDirection = false;
-    win = false;
+    lastThrowTime = 0;
+    isFinished = false;
+    isStopped = false;
+    frameId = null;
 
-    /** Initialisiert Canvas, Level, Charakterbindung, Spielschleife und Hintergrundmusik. @param {HTMLCanvasElement} canvas Ziel-Canvas. */
+    /**
+     * Initialisiert Canvas, Level, Charakterbindung, Spielschleife und Hintergrundmusik.
+     * @param {HTMLCanvasElement} canvas Ziel-Canvas.
+     */
     constructor(canvas) {
-        window.world = this;
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.level = level1();
+        this.character.world = this;
+        this.countCollectibles();
         this.draw();
-        this.setWorld();
         this.run();
         AudioHub.playOne(AudioHub.GAME_SOUND);
     }
 
-    /** Verknuepft den Charakter mit dieser Welt fuer Level- und Kameraabfragen. */
-    setWorld() {
-        this.character.world = this;
+    /** Zaehlt Muenzen und Flaschen des Levels fuer die prozentuale Statusanzeige. */
+    countCollectibles() {
+        this.totalCoins = this.level.collectibles.filter(item => item instanceof Coin).length || 1;
+        this.totalBottles = this.level.collectibles.filter(item => item instanceof SalsaBottle).length || 1;
     }
 
-    /** Zeichnet einen Frame und plant den naechsten Render-Frame. */
+    /** Zeichnet einen Frame und plant den naechsten Render-Frame, solange die Welt laeuft. */
     draw() {
+        if (this.isStopped) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.limitCamera();
-        this.ctx.translate(this.character.camera_x, 0);
+        this.ctx.translate(this.character.cameraX, 0);
         this.drawLevelObjects();
-        this.ctx.translate(-this.character.camera_x, 0);
+        this.ctx.translate(-this.character.cameraX, 0);
         this.drawStatusBars();
-        requestAnimationFrame(() => this.draw());
-    }
-
-    /** Verhindert, dass die Kamera nach rechts ueber den Weltanfang hinauslaeuft. */
-    limitCamera() {
-        if (this.character.camera_x > 0) this.character.camera_x = 0;
+        this.frameId = requestAnimationFrame(() => this.draw());
     }
 
     /** Zeichnet Hintergrund, Gegner, Sammelobjekte, Charakter und Wurfobjekte. */
     drawLevelObjects() {
         [this.level.backgroundObjects, this.level.clouds, this.level.enemies,
-            this.level.collectibles].forEach(objects => {
-            this.addObjectsToMap(objects);
-        });
+            this.level.collectibles].forEach(objects => this.addObjectsToMap(objects));
         this.addToMap(this.character);
         this.addObjectsToMap(this.throwableObjects);
     }
 
-    /** Zeichnet alle HUD-Statusleisten ohne Kameratransformation. */
+    /** Zeichnet die HUD-Statusleisten und die Bossleiste nur, wenn der Boss sichtbar ist. */
     drawStatusBars() {
-        [this.statusbarCoins, this.statusbarBottles, this.statusbarHealth,
-            this.statusbarEndboss].forEach(statusbar => this.addToMap(statusbar));
+        const statusbars = [this.statusbarCoins, this.statusbarBottles, this.statusbarHealth];
+        if (this.isEndbossVisible()) statusbars.push(this.statusbarEndboss);
+        statusbars.forEach(statusbar => this.addToMap(statusbar));
     }
 
-    /** Zeichnet eine Objektliste einzeln auf die Weltkarte. @param {DrawableObject[]} objects Zu zeichnende Objekte. */
+    /**
+     * Prueft, ob der Endboss im aktuellen Kameraausschnitt liegt.
+     * @returns {boolean} Sichtbarkeit des Endbosses.
+     */
+    isEndbossVisible() {
+        const cameraX = this.character.cameraX;
+        return this.level.enemies.some(enemy => enemy instanceof Endboss
+            && enemy.x + enemy.width + cameraX > 0
+            && enemy.x + cameraX < this.canvas.width);
+    }
+
+    /**
+     * Zeichnet eine Objektliste einzeln auf die Weltkarte.
+     * @param {DrawableObject[]} objects Zu zeichnende Objekte.
+     */
     addObjectsToMap(objects) {
-        objects.forEach(o => {
-            this.addToMap(o);
-        });
+        objects.forEach(object => this.addToMap(object));
     }
 
-    /** Zeichnet ein Objekt und behandelt Animation, Spiegelung und Debug-Rahmen. @param {DrawableObject} mo Objekt. */
+    /**
+     * Zeichnet ein Objekt, aktualisiert seinen Kollisionsrahmen und spiegelt es bei Bedarf.
+     * @param {DrawableObject} mo Objekt.
+     */
     addToMap(mo) {
-        if (this.isAnimatedObject(mo)) mo.getRealFrame();
+        mo.getRealFrame();
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 
-    /** Ermittelt, ob ein Objekt einen beweglichen Kollisionsrahmen benoetigt. @param {DrawableObject} mo Objekt. @returns {boolean} Animationsstatus. */
-    isAnimatedObject(mo) {
-        return mo instanceof Character || mo instanceof Chicken || mo instanceof SmallChicken
-            || mo instanceof Endboss || mo instanceof Coin || mo instanceof SalsaBottle
-            || mo instanceof ThrowableObject;
-    }
-
-    /** Spiegelt den Zeichenkontext und die Objektposition horizontal. @param {DrawableObject} mo Objekt. */
+    /**
+     * Spiegelt den Zeichenkontext und die Objektposition horizontal.
+     * @param {DrawableObject} mo Objekt.
+     */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
@@ -109,186 +119,90 @@ export class World {
         mo.x = mo.x * -1;
     }
 
-    /** Stellt Spiegelung und Objektposition nach dem Zeichnen wieder her. @param {DrawableObject} mo Objekt. */
+    /**
+     * Stellt Spiegelung und Objektposition nach dem Zeichnen wieder her.
+     * @param {DrawableObject} mo Objekt.
+     */
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
-    /** Verarbeitet den Treffer einer Flasche auf einen Gegner. @param {ThrowableObject} bottle Getroffene Flasche. @param {MoveableObject} enemy Getroffener Gegner. */
-    hitBottle(bottle, enemy) {
-    if (bottle.isCollided || enemy.energy === 0) return;
-    this.stopBottle(bottle);
-    if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
-        this.handleChickenHit(enemy);
-    } else if (enemy instanceof Endboss) {
-        this.handleEndbossHit(enemy);
-    }
-    this.removeBottle(bottle);
-}
-
-/** Stoppt eine kollidierte Flasche und markiert ihren Aufprallzustand. @param {ThrowableObject} bottle Flasche. */
-stopBottle(bottle) {
-    bottle.isCollided = true;
-    this.lastThrow = new Date().getTime();
-    bottle.speed = 0;
-    bottle.speedY = 0;
-    bottle.bottleHitEnemy = true;
-}
-
-/** Besiegt ein Huhn, spielt den Sound und entfernt es zeitversetzt. @param {MoveableObject} enemy Huhn. */
-handleChickenHit(enemy) {
-    enemy.energy = 0;
-    if (!AudioHub.isMuted) {
-        AudioHub.playOne(AudioHub.CHIC_DEAD);
-    }
-    setTimeout(() => {
-        const i = this.level.enemies.indexOf(enemy);
-        if (i !== -1) this.level.enemies.splice(i, 1);
-    }, 300);
-}
-
-/** Verarbeitet Boss-Schaden, HUD-Aktualisierung und Todes- oder Trefferfolge. @param {Endboss} enemy Endboss. */
-handleEndbossHit(enemy) {
-    enemy.energy -= 20;
-    enemy.lastEndbossHit = new Date().getTime();
-    this.statusbarEndboss.setPercentage(enemy.energy);
-    if (enemy.isDead() || enemy.energy <= 0) {
-        this.handleEndbossDeath(enemy);
-    } else if (!AudioHub.isMuted) {
-        AudioHub.playOne(AudioHub.BOSS_HURT);
-    }
-}
-
-/** Spielt den Boss-Todessound und entfernt den Boss zeitversetzt. @param {Endboss} enemy Endboss. */
-handleEndbossDeath(enemy) {
-    if (!enemy.isDeadPlayed && !AudioHub.isMuted) {
-        enemy.isDeadPlayed = true;
-        AudioHub.playOne(AudioHub.BOSS_DEAD);
-    }
-    setTimeout(() => {
-        const i = this.level.enemies.indexOf(enemy);
-        if (i !== -1) this.level.enemies.splice(i, 1);
-    }, 3000);
-}
-
-/** Entfernt eine Wurf-Flasche nach kurzer Anzeigeverzoegerung. @param {ThrowableObject} bottle Flasche. */
-removeBottle(bottle) {
-    setTimeout(() => {
-        const index = this.throwableObjects.indexOf(bottle);
-        if (index !== -1) {
-            this.throwableObjects.splice(index, 1);
-        }
-    }, 200);
-}
-
-    /** Verarbeitet einen Charaktertreffer und begrenzt danach seine Energie. @param {MoveableObject} enemy Angreifer. */
-    hit(enemy) {
-        if (this.isJumpAttack(enemy)) this.defeatByJump(enemy);
-        else this.damageByCollision(enemy);
-        this.limitCharacterEnergy();
-    }
-
-    /** Prueft, ob ein Gegner durch einen Sprung von oben getroffen wurde. @param {MoveableObject} enemy Gegner. @returns {boolean} Sprungangriffstatus. */
-    isJumpAttack(enemy) {
-        return this.character.speedY < 0 && !(enemy instanceof Endboss);
-    }
-
-    /** Besiegt einen Gegner durch einen Sprung und entfernt ihn verzoegert. @param {MoveableObject} enemy Gegner. */
-    defeatByJump(enemy) {
-        enemy.energy = 0;
-        const enemyIndex = this.level.enemies.indexOf(enemy);
-        setTimeout(() => this.removeEnemy(enemyIndex), 500);
-    }
-
-    /** Entfernt einen Gegner anhand seines Listenindex. @param {number} enemyIndex Index. */
-    removeEnemy(enemyIndex) {
-        if (enemyIndex !== -1) this.level.enemies.splice(enemyIndex, 1);
-    }
-
-    /** Zieht dem Charakter kollisionsabhaengig Energie ab. @param {MoveableObject} enemy Gegner. */
-    damageByCollision(enemy) {
-        if (enemy.energy <= 0) return;
-        const damage = enemy instanceof SmallChicken ? 0.5 : 1;
-        this.character.energy -= damage;
-    }
-
-    /** Begrenzt die Charakterenergie auf mindestens null und setzt den Trefferzeitpunkt. */
-    limitCharacterEnergy() {
-        if (this.character.energy <= 0) this.character.energy = 0;
-        else this.lastHit = Date.now();
-}
-
     /** Startet die zentrale Kollisions-, Wurf- und Spielstatusschleife. */
     run() {
         IntervalHub.startInterval(() => {
-            this.checkCollisions();
-            this.checkBottleHitEnemy();
+            this.checkEnemyCollisions();
             this.checkBottleThrow();
-            this.checkBottleHitGround();
+            this.checkBottles();
             this.checkCollisionCollectible();
-            this.isGameLost();
-            this.isGameWin();
-        }, 1000 / 60); 
+            if (this.character.isDead()) this.finishGame(false);
+        }, 1000 / 60);
     }
 
-/** Prueft Gegner auf Bosssteuerung und Charakterkollisionen. */
-checkCollisions() {
-    this.level.enemies.forEach(enemy => {
-        if (enemy instanceof Endboss) this.handleEndboss(enemy);
-        if (this.character.isColliding(enemy)) this.handleEnemyCollision(enemy);
-    });
-}
-
-/** Steuert Bossrichtung, Angriff, Alarm und Patrouillengeschwindigkeit. @param {Endboss} enemy Endboss. */
-handleEndboss(enemy) {
-    const dist = Math.abs(this.character.x - enemy.x);
-    enemy.otherDirection = this.character.x > enemy.x;
-    if (dist < 800) {
-        if (!enemy.hasAlerted) { enemy.hasAlerted = true; if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.BOSS_ALERT); }
-        enemy.speed = 2.5;
-        enemy.x += (this.character.x < enemy.x) ? -enemy.speed : enemy.speed;
-        if (enemy.currentAlertState !== 'attack' && !AudioHub.isMuted) {
-            enemy.currentAlertState = 'attack'; AudioHub.playOne(AudioHub.BOSS_ATTACK);
-        }
-    } else { enemy.speed = 0.5; enemy.currentAlertState = 'patrol'; }
-}
-
-/** Waehlt fuer einen Gegner zwischen Boss-, Sprung- und normaler Kollision. @param {MoveableObject} enemy Gegner. */
-handleEnemyCollision(enemy) {
-    if (enemy instanceof Endboss) {
-        this.damageCharacter(enemy);
-    } else if (this.isJumpOnChicken(enemy)) {
-        this.defeatChicken(enemy);
-    } else {
-        this.damageCharacter(enemy);
+    /** Steuert den Endboss und prueft alle Gegner auf Kollision mit dem Charakter. */
+    checkEnemyCollisions() {
+        this.level.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss) enemy.followCharacter(this.character);
+            if (enemy.isDead() || this.character.isDead()) return;
+            if (!this.character.isColliding(enemy)) return;
+            if (this.isJumpOnEnemy(enemy)) this.stompEnemy(enemy);
+            else this.damageCharacter(enemy);
+        });
     }
-}
 
-/** Prueft, ob der Charakter ein Huhn von oben trifft. @param {MoveableObject} enemy Huhn. @returns {boolean} Sprungtrefferstatus. */
-isJumpOnChicken(enemy) {
-    return this.character.isAboveGround() && (this.character.rY + this.character.rH) <= (enemy.rY + 30);
-}
+    /**
+     * Prueft, ob der Charakter von oben auf einem Huhn landet. Massgeblich ist die Fussposition
+     * vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehnern zaehlen.
+     * @param {MoveableObject} enemy Gegner.
+     * @returns {boolean} Ob es ein Treffer von oben ist.
+     */
+    isJumpOnEnemy(enemy) {
+        if (enemy instanceof Endboss || !this.character.movedDown()) return false;
+        return this.character.previousBottom <= enemy.rY + 15;
+    }
 
-/** Markiert ein Huhn als besiegt, spielt den Sound und entfernt es. @param {MoveableObject} enemy Huhn. */
-defeatChicken(enemy) {
-    if (enemy.isHit) return;
-    enemy.isHit = true;
-    this.character.speedY = 15;
-    enemy.energy = 0;
-    if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.CHIC_DEAD);
-    setTimeout(() => {
-        let i = this.level.enemies.indexOf(enemy);
-        if (i !== -1) this.level.enemies.splice(i, 1);
-    }, 300);
-}
+    /**
+     * Besiegt ein Huhn durch einen Sprung und laesst den Charakter abprallen.
+     * @param {MoveableObject} enemy Huhn.
+     */
+    stompEnemy(enemy) {
+        this.character.speedY = 15;
+        this.killEnemy(enemy);
+    }
 
-/** Verarbeitet Charakter-Schaden, Sound und Gesundheitsanzeige. @param {MoveableObject} enemy Angreifer. */
-damageCharacter(enemy) {
-    this.hit(enemy);
-    if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.HURT_SOUND);
-    this.statusbarHealth.setPercentage(this.character.energy);
-}
+    /**
+     * Setzt einen Gegner auf tot, spielt den Sound und entfernt ihn zeitversetzt.
+     * @param {MoveableObject} enemy Gegner.
+     */
+    killEnemy(enemy) {
+        enemy.energy = 0;
+        AudioHub.playOne(AudioHub.CHIC_DEAD);
+        setTimeout(() => this.removeFrom(this.level.enemies, enemy), 500);
+    }
+
+    /**
+     * Zieht dem Charakter je nach Gegnertyp Energie ab, sofern er nicht unverwundbar ist.
+     * @param {MoveableObject} enemy Angreifer.
+     */
+    damageCharacter(enemy) {
+        if (this.character.isHurt()) return;
+        const damage = enemy instanceof Endboss ? 20 : enemy instanceof SmallChicken ? 5 : 10;
+        this.character.energy = Math.max(0, this.character.energy - damage);
+        this.character.lastHit = Date.now();
+        AudioHub.playOne(AudioHub.HURT_SOUND);
+        this.statusbarHealth.setPercentage(this.character.energy);
+    }
+
+    /**
+     * Entfernt ein Objekt per Referenz aus einer Liste und beendet seine Timer.
+     * @param {Array} list Objektliste.
+     * @param {DrawableObject} object Zu entfernendes Objekt.
+     */
+    removeFrom(list, object) {
+        const index = list.indexOf(object);
+        if (index !== -1) list.splice(index, 1);
+        if (object.dispose) object.dispose();
+    }
 
     /** Sucht kollidierte Sammelobjekte und verarbeitet sie. */
     checkCollisionCollectible() {
@@ -297,109 +211,121 @@ damageCharacter(enemy) {
             .forEach(item => this.collectItem(item));
     }
 
-    /** Trennt Muenzen und Flaschen und entfernt das eingesammelte Objekt. @param {DrawableObject} item Sammelobjekt. */
+    /**
+     * Entfernt das eingesammelte Objekt und zaehlt es als Muenze oder Flasche.
+     * @param {DrawableObject} item Sammelobjekt.
+     */
     collectItem(item) {
-        const isCoin = item instanceof Coin;
-        if (!isCoin && !(item instanceof SalsaBottle)) return;
-        this.removeCollectible(item);
-        isCoin ? this.collectCoin() : this.collectBottle();
-    }
-
-    /** Entfernt ein Sammelobjekt aus dem Level. @param {DrawableObject} item Sammelobjekt. */
-    removeCollectible(item) {
-        const index = this.level.collectibles.indexOf(item);
-        this.level.collectibles.splice(index, 1);
+        this.removeFrom(this.level.collectibles, item);
+        if (item instanceof Coin) this.collectCoin();
+        else if (item instanceof SalsaBottle) this.collectBottle();
     }
 
     /** Erhoeht die Muenzzahl, aktualisiert die Anzeige und spielt den Sound. */
     collectCoin() {
         this.coins++;
-        this.statusbarCoins.setPercentage(this.coins * 20);
+        this.statusbarCoins.setPercentage(this.coins * 100 / this.totalCoins);
         AudioHub.playOne(AudioHub.COIN_SOUND);
     }
 
     /** Erhoeht die Flaschenzahl, aktualisiert die Anzeige und spielt den Sound. */
     collectBottle() {
         this.bottles++;
-        this.statusbarBottles.setPercentage(this.bottles * 20);
+        this.updateBottleBar();
         AudioHub.playOne(AudioHub.BOTL_PICK);
     }
 
-    /** Erzeugt bei Eingabe eine Wurf-Flasche und reduziert den Vorrat. */
-    checkBottleThrow() {
-        if (Keyboard.B && !this.isThrow && this.bottles > 0) {
-            this.isThrow = true;
-            const i = this.character.otherDirection ? this.character.x -20 : this.character.x + 100;
-            let bottle = new ThrowableObject(i , this.character.y + 150, this.character.otherDirection);
-            this.throwableObjects.push(bottle);
-            this.bottles--;
-            this.statusbarBottles.setPercentage(this.bottles * 20);
-            setTimeout(() => {
-                this.isThrow = false;
-            }, 1500);
-        }
+    /** Aktualisiert die Flaschenanzeige anhand des aktuellen Vorrats. */
+    updateBottleBar() {
+        this.statusbarBottles.setPercentage(this.bottles * 100 / this.totalBottles);
     }
 
-    /** Prueft Wurf-Flaschen auf Gegnerkollisionen und Aufprall-Sound. */
-    checkBottleHitEnemy() {
-        this.throwableObjects.forEach(bottle => {
-            if (!bottle.isCollided) {
-                this.level.enemies.forEach(enemy => {
-                    if (bottle.isColliding(enemy) && bottle.checkLastThrow()) {
-                        this.hitBottle(bottle, enemy);
-                        AudioHub.playOne(AudioHub.BOTL_BREAK);
-                    } else {
-                        AudioHub.stopOne(AudioHub.BOTL_BREAK);
-                    }
-                });
-            }
+    /** Erzeugt bei Eingabe eine Wurf-Flasche, sofern Vorrat und Abklingzeit es erlauben. */
+    checkBottleThrow() {
+        const canThrow = Date.now() - this.lastThrowTime > 1000;
+        if (!Keyboard.B || !canThrow || this.bottles <= 0 || this.character.isDead()) return;
+        this.lastThrowTime = Date.now();
+        const pepe = this.character;
+        const x = pepe.otherDirection ? pepe.x - 20 : pepe.x + 100;
+        this.throwableObjects.push(new ThrowableObject(x, pepe.y + 150, pepe.otherDirection));
+        this.bottles--;
+        this.updateBottleBar();
+        pepe.idleTimeStamp = Date.now();
+    }
+
+    /** Prueft fliegende Flaschen auf Gegnertreffer und Bodenkontakt. */
+    checkBottles() {
+        this.throwableObjects.filter(bottle => !bottle.isBroken).forEach(bottle => {
+            const enemy = this.level.enemies.find(e => !e.isDead() && bottle.isColliding(e));
+            if (enemy) this.hitEnemyWithBottle(bottle, enemy);
+            else if (bottle.hasHitGround()) this.breakBottle(bottle);
         });
     }
 
-    /** Entfernt Flaschen nach Bodenkontakt und spielt den Aufprall-Sound. */
-    checkBottleHitGround() {
-        for (let i = 0; i < this.throwableObjects.length; i++) {
-            const bottle = this.throwableObjects[i];
-            if (bottle.y >= 340) {
-                setTimeout(() => {
-                    AudioHub.playOne(AudioHub.BOTL_BREAK);
-                    this.throwableObjects.splice(i, 1);
-                }, 200);
-            }
-        }
+    /**
+     * Verarbeitet den Treffer einer Flasche auf einen Gegner.
+     * @param {ThrowableObject} bottle Flasche.
+     * @param {MoveableObject} enemy Getroffener Gegner.
+     */
+    hitEnemyWithBottle(bottle, enemy) {
+        this.breakBottle(bottle);
+        if (enemy instanceof Endboss) this.damageEndboss(enemy);
+        else this.killEnemy(enemy);
     }
 
-    /** Plant bei totem Charakter die Anzeige des Niederlagenbildschirms. */
-    isGameLost() {
-        if (this.win || this.winProcessed || !this.character.isDead()) return;
-        setTimeout(() => this.showLossScreen(), 2000);
+    /**
+     * Laesst eine Flasche zerplatzen und entfernt sie nach der Spritzanimation.
+     * @param {ThrowableObject} bottle Flasche.
+     */
+    breakBottle(bottle) {
+        bottle.break();
+        AudioHub.playOne(AudioHub.BOTL_BREAK);
+        setTimeout(() => this.removeFrom(this.throwableObjects, bottle), 500);
     }
 
-    /** Zeigt den Niederlagenbildschirm und stoppt Audio sowie Timer. */
-    showLossScreen() {
-        const screen = document.getElementById('gameOverScreen');
-        if (screen) {
-            screen.classList.remove('d-none');
-            screen.style.backgroundImage = "url('./assets/img/You won, you lost/Game Over.png')";
-        }
+    /**
+     * Verarbeitet Boss-Schaden, HUD-Aktualisierung sowie Treffer- oder Todessound.
+     * @param {Endboss} boss Endboss.
+     */
+    damageEndboss(boss) {
+        boss.energy = Math.max(0, boss.energy - 20);
+        boss.lastEndbossHit = Date.now();
+        this.statusbarEndboss.setPercentage(boss.energy);
+        if (!boss.isDead()) return AudioHub.playOne(AudioHub.BOSS_HURT);
+        AudioHub.playOne(AudioHub.BOSS_DEAD);
+        this.finishGame(true);
+    }
+
+    /**
+     * Plant einmalig die Anzeige des End-Bildschirms nach Ablauf der Todesanimation.
+     * @param {boolean} won Ob das Spiel gewonnen wurde.
+     */
+    finishGame(won) {
+        if (this.isFinished) return;
+        this.isFinished = true;
+        setTimeout(() => this.showEndScreen(won), 2000);
+    }
+
+    /**
+     * Stoppt die Welt und zeigt den Sieg- oder Niederlagenbildschirm.
+     * @param {boolean} won Ob das Spiel gewonnen wurde.
+     */
+    showEndScreen(won) {
+        if (this.isStopped) return;
+        this.stop();
         AudioHub.stopAll();
-        IntervalHub.stopAllInterval();
+        if (won) AudioHub.playOne(AudioHub.WIN_SOUND);
+        const image = won ? ImageHub.INTRO_OUTRO_SCREENS.won[0] : ImageHub.INTRO_OUTRO_SCREENS.lost[0];
+        const screen = document.getElementById('gameOverScreen');
+        screen.style.backgroundImage = `url('${image}')`;
+        screen.classList.remove('d-none');
+        window.dispatchEvent(new CustomEvent('gameended'));
     }
 
-    /** Plant nach besiegtem Boss die Anzeige des Sieg-Bildschirms. */
-    isGameWin() {
-        if (this.win && !this.winProcessed) {
-            this.winProcessed = true;
-            setTimeout(() => {
-                const gameOverScreen = document.getElementById('gameOverScreen');
-                if (gameOverScreen) {
-                    gameOverScreen.classList.remove('d-none');
-                    gameOverScreen.style.backgroundImage = "url('./assets/img/You won, you lost/You Win A.png')";
-                    AudioHub.stopAll();
-                }
-                AudioHub.playOne(AudioHub.WIN_SOUND);
-                IntervalHub.stopAllInterval();
-            }, 2000);
-        }
+    /** Beendet Zeichenschleife und alle Timer dieser Welt endgueltig. */
+    stop() {
+        this.isStopped = true;
+        cancelAnimationFrame(this.frameId);
+        IntervalHub.stopAllInterval();
     }
 }

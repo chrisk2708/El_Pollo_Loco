@@ -1,6 +1,5 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
 
 /** Sammelbare, animierte Muenze des Levels. */
 export class Coin extends DrawableObject {
@@ -28,7 +27,7 @@ export class Coin extends DrawableObject {
 
     /** Registriert die zyklische Muenzenanimation. */
     animate() {
-        IntervalHub.startInterval(() => {
+        this.registerInterval(() => {
             this.playAnimation(this.IMAGES);
         }, 300);
     }

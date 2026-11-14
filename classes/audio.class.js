@@ -1,12 +1,16 @@
 /** Repraesentiert eine einzelne Audioquelle des Spiels und ihre Wiedergabeeinstellungen. */
 export class MyAudio {
     file;
-    isLoaded = false;
 
-    /** Erzeugt ein HTMLAudioElement und konfiguriert Schleife und Stummschaltung. @param {string} _file Audioquellpfad. @param {boolean} loop Ob die Quelle wiederholt wird. @param {boolean} isMuted Anfangsstatus der Stummschaltung. */
-    constructor(_file, loop = false, isMuted = true){
-        this.file = new Audio(_file);
+    /**
+     * Erzeugt ein HTMLAudioElement und konfiguriert Schleife und Lautstaerke.
+     * @param {string} path Audioquellpfad.
+     * @param {boolean} loop Ob die Quelle wiederholt wird.
+     * @param {number} volume Lautstaerke zwischen 0 und 1.
+     */
+    constructor(path, loop = false, volume = 0.3) {
+        this.file = new Audio(path);
         this.file.loop = loop;
-        this.file.muted = isMuted;
+        this.file.volume = volume;
     }
 }

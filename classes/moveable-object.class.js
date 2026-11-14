@@ -1,42 +1,77 @@
-import { AudioHub } from "./audio-hub.class.js";
 import { DrawableObject } from "./drawable-object.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
 
 /** Erweiterung eines DrawableObject um Bewegung, Gravitation und Lebenszustand. */
 export class MoveableObject extends DrawableObject {
     speed = 0.15;
     speedY = 0;
     acceleration = 2.5;
+    groundY = 130;
     energy = 100;
     lastHit = 0;
     lastEndbossHit = 0;
-    lastThrow = 0;
-    bottleHitEnemy = false;
+    previousBottom = 0;
 
     /** Startet einen Timer, der vertikale Bewegung und Gravitation aktualisiert. */
     applyGravity() {
-    IntervalHub.startInterval(() => {
+        this.registerInterval(() => this.updateGravity(), 1000 / 25);
+    }
+
+    /** Fuehrt einen Gravitationsschritt aus und merkt sich die vorherige Unterkante. */
+    updateGravity() {
+        this.previousBottom = this.getBottom();
         if (this.isAboveGround() || this.speedY > 0) {
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
+            if (!this.isAboveGround()) this.land();
             this.getRealFrame();
         } else {
-            this.speedY = 0; 
+            this.speedY = 0;
         }
-    }, 1000 / 25);
-}
+    }
 
-    /** Prueft, ob sich das Objekt oberhalb der definierten Bodenhoehe befindet. @returns {boolean} Ob das Objekt in der Luft ist. */
+    /**
+     * Liefert die Unterkante des Kollisionsrahmens.
+     * @returns {number} Y-Koordinate der Unterkante.
+     */
+    getBottom() {
+        return this.y + this.height - this.offset.bottom;
+    }
+
+    /**
+     * Prueft, ob sich das Objekt im letzten Gravitationsschritt nach unten bewegt hat.
+     * @returns {boolean} Ob es gerade abwaerts kommt.
+     */
+    movedDown() {
+        return this.getBottom() > this.previousBottom;
+    }
+
+    /** Setzt das Objekt nach einem Sprung exakt auf die Bodenhoehe. */
+    land() {
+        this.y = this.groundY;
+        this.speedY = 0;
+    }
+
+    /**
+     * Prueft, ob sich das Objekt oberhalb der definierten Bodenhoehe befindet.
+     * @returns {boolean} Ob das Objekt in der Luft ist.
+     */
     isAboveGround() {
-        return this.y <= 130;
+        return this.y < this.groundY;
     }
 
-    /** Prueft, ob das Objekt sich abwaerts bewegt. @returns {boolean} Ob es faellt. */
+    /**
+     * Prueft, ob das Objekt sich in der Luft abwaerts bewegt.
+     * @returns {boolean} Ob es faellt.
+     */
     isFalling() {
-        return (this.isAboveGround() && this.speedY < 0);
+        return this.isAboveGround() && this.speedY < 0;
     }
 
-    /** Prueft die Rechteck-Kollision mit einem anderen beweglichen Objekt. @param {MoveableObject} mo Vergleichsobjekt. @returns {boolean} Kollisionsstatus. */
+    /**
+     * Prueft die Rechteck-Kollision mit einem anderen Objekt.
+     * @param {DrawableObject} mo Vergleichsobjekt.
+     * @returns {boolean} Kollisionsstatus.
+     */
     isColliding(mo) {
         return this.rX + this.rW > mo.rX &&
             this.rY + this.rH > mo.rY &&
@@ -44,33 +79,28 @@ export class MoveableObject extends DrawableObject {
             this.rY < mo.rY + mo.rH;
     }
 
-    /** Verringert die Energie und setzt bei Schaden den Trefferzeitpunkt. */
-    hit() {
-        this.energy -= 10 ;
-        if (this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
-        }
-    }
-
-    /** Prueft, ob der letzte Treffer noch als kurzer Schadenzustand gilt. @returns {boolean} Schadenstatus. */
+    /**
+     * Prueft, ob die 1,5-Sekunden-Unverwundbarkeit nach einem Treffer noch aktiv ist.
+     * @returns {boolean} Schadenstatus.
+     */
     isHurt() {
-        let timePassed = new Date().getTime() - this.lastHit;
-        timePassed = timePassed / 1000;
-        return timePassed < 0.5;
+        return (Date.now() - this.lastHit) / 1000 < 1.5;
     }
 
-    /** Prueft den laengeren Trefferzustand des Endbosses. @returns {boolean} Boss-Schadenstatus. */
+    /**
+     * Prueft den Trefferzustand des Endbosses.
+     * @returns {boolean} Boss-Schadenstatus.
+     */
     isHurtEndboss() {
-        let timePassed = new Date().getTime() - this.lastEndbossHit;
-        timePassed = timePassed / 1000;
-        return timePassed < 1.5;
+        return (Date.now() - this.lastEndbossHit) / 1000 < 1.5;
     }
 
-    /** Prueft, ob keine Energie mehr vorhanden ist. @returns {boolean} Todesstatus. */
+    /**
+     * Prueft, ob keine Energie mehr vorhanden ist.
+     * @returns {boolean} Todesstatus.
+     */
     isDead() {
-        return this.energy == 0;
+        return this.energy <= 0;
     }
 
     /** Bewegt das Objekt nach rechts und aktualisiert den Kollisionsrahmen. */
@@ -83,17 +113,5 @@ export class MoveableObject extends DrawableObject {
     moveLeft() {
         this.x -= this.speed;
         this.getRealFrame();
-    }
-
-    /** Setzt die vertikale Geschwindigkeit fuer einen Sprung. */
-    jump() {
-        this.speedY = 30;
-    }
-
-    /** Prueft, ob der letzte Wurf lange genug zurueckliegt. @returns {boolean} Ob ein neuer Treffer erlaubt ist. */
-    checkLastThrow() {
-        let timePassed = new Date().getTime() - this.lastThrow;
-        timePassed = timePassed / 1000;
-        return timePassed > 0.5;
     }
 }
