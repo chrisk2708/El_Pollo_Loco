@@ -298,7 +298,6 @@ button:hover {
 
 .imprint-dialog h2 {
     font-size: clamp(1.2rem, 5vw, 1.8rem);
-    padding-right: 36px;
 }
 
 .imprint-dialog h3 {
