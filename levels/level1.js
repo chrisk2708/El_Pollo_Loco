@@ -1,32 +1,44 @@
-import { Chicken } from "../models/normal-chicken.class.js";
-import { Endboss } from "../models/endboss.class.js";
-import { Level } from "../models/level.class.js";
-import { SmallChicken } from "../models/small-chicken.class.js";
-import { Coin } from "../models/coin.class.js";
-import { SalsaBottle } from "../models/salsa-bottle.class.js";
+import { Chicken } from "../classes/normal-chicken.class.js";
+import { Endboss } from "../classes/endboss.class.js";
+import { Level } from "../classes/level.class.js";
+import { SmallChicken } from "../classes/small-chicken.class.js";
+import { Coin } from "../classes/coin.class.js";
+import { SalsaBottle } from "../classes/salsa-bottle.class.js";
 
-/** Erstellt die konkrete Gegner- und Sammelobjektkonfiguration fuer Level 1. @returns {Level} Vollstaendig initialisiertes Level. */
+const COIN_POSITIONS = [
+    [300, 200], [350, 150], [400, 100], [450, 150], [700, 100], [800, 200], [900, 250],
+    [1300, 100], [1300, 250], [1400, 200], [1450, 150], [1500, 100], [1700, 300], [1700, 250],
+    [1800, 300], [1850, 250], [1900, 200], [1950, 250]
+];
+
+const BOTTLE_X_POSITIONS = [400, 450, 750, 800, 1000, 1200, 1250, 1270, 1300, 1500, 1550, 1600];
+
+/**
+ * Erstellt alle Gegner fuer Level 1.
+ * @returns {Array<Chicken|SmallChicken|Endboss>} Gegnerliste.
+ */
+function createEnemies() {
+    const chickens = Array.from({ length: 10 }, () => new Chicken());
+    const smallChickens = Array.from({ length: 8 }, () => new SmallChicken());
+    return [...chickens, ...smallChickens, new Endboss()];
+}
+
+
+/**
+ * Erstellt alle Muenzen und Flaschen fuer Level 1.
+ * @returns {Array<Coin|SalsaBottle>} Sammelobjekte.
+ */
+function createCollectibles() {
+    const coins = COIN_POSITIONS.map(([x, y]) => new Coin(x, y));
+    const bottles = BOTTLE_X_POSITIONS.map(x => new SalsaBottle(x, 370));
+    return [...coins, ...bottles];
+}
+
+
+/**
+ * Erstellt die konkrete Gegner- und Sammelobjektkonfiguration fuer Level 1.
+ * @returns {Level} Vollstaendig initialisiertes Level.
+ */
 export function level1() {
-    return new Level(
-    
-    4,
-    [
-        new Chicken(), new Chicken(), new Chicken(), new Chicken(), new Chicken(),
-        new Chicken(), new Chicken(), new Chicken(), new Chicken(), new Chicken(),
-        new SmallChicken(), new SmallChicken(), new SmallChicken(), new SmallChicken(),
-        new SmallChicken(), new SmallChicken(), new SmallChicken(), new SmallChicken(),
-        new Endboss()
-    ],
-
-    [
-        new Coin(300, 200), new Coin(350, 150), new Coin(400, 100), new Coin(450, 150), new Coin(700, 100),
-        new Coin(800, 200), new Coin(900, 250), new Coin(1300, 100), new Coin(1300, 250),
-        new Coin(1400, 200), new Coin(1450, 150), new Coin(1500, 100), new Coin(1700, 300), new Coin(1700, 250),
-        new Coin(1800, 300), new Coin(1850, 250), new Coin(1900, 200), new Coin(1950, 250),
-        new SalsaBottle(400, 370), new SalsaBottle(450, 370), new SalsaBottle(750, 370),
-        new SalsaBottle(800, 370), new SalsaBottle(1000, 370), new SalsaBottle(1200, 370),
-        new SalsaBottle(1250, 370), new SalsaBottle(1270, 370), new SalsaBottle(1300, 370),
-        new SalsaBottle(1500, 370), new SalsaBottle(1550, 370), new SalsaBottle(1600, 370)
-    ],
-);
+    return new Level(4, createEnemies(), createCollectibles());
 }

@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["./js", "./models", "./levels"],
+    "include": ["./js", "./classes", "./levels"],
     "includePattern": ".+\\.js$",
     "excludePattern": "(^|[\\/])_"
   },
