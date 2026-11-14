@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line6">line 6</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line4">line 4</a>
     </li></ul></dd>
     
 
@@ -201,7 +201,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line17">line 17</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -237,7 +237,7 @@
     
 
     
-    <h4 class="name" id="checkLastThrow"><span class="type-signature"></span>checkLastThrow<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getBottom"><span class="type-signature"></span>getBottom<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
@@ -245,7 +245,7 @@
 
 
 <div class="description">
-    <p>Prueft, ob der letzte Wurf lange genug zurueckliegt. @returns {boolean} Ob ein neuer Treffer erlaubt ist.</p>
+    <p>Liefert die Unterkante des Kollisionsrahmens.</p>
 </div>
 
 
@@ -289,7 +289,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line94">line 94</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -314,6 +314,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Y-Koordinate der Unterkante.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -325,7 +347,7 @@
     
 
     
-    <h4 class="name" id="hit"><span class="type-signature"></span>hit<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isAboveGround"><span class="type-signature"></span>isAboveGround<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -333,7 +355,7 @@
 
 
 <div class="description">
-    <p>Verringert die Energie und setzt bei Schaden den Trefferzeitpunkt.</p>
+    <p>Prueft, ob sich das Objekt oberhalb der definierten Bodenhoehe befindet.</p>
 </div>
 
 
@@ -377,7 +399,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line48">line 48</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -402,6 +424,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Ob das Objekt in der Luft ist.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -413,7 +457,7 @@
     
 
     
-    <h4 class="name" id="isAboveGround"><span class="type-signature"></span>isAboveGround<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isColliding"><span class="type-signature"></span>isColliding<span class="signature">(mo)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -421,7 +465,166 @@
 
 
 <div class="description">
-    <p>Prueft, ob sich das Objekt oberhalb der definierten Bodenhoehe befindet. @returns {boolean} Ob das Objekt in der Luft ist.</p>
+    <p>Prueft die Rechteck-Kollision mit einem anderen Objekt.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="DrawableObject.html">DrawableObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Vergleichsobjekt.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Kollisionsstatus.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isDead"><span class="type-signature"></span>isDead<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Prueft, ob keine Energie mehr vorhanden ist.</p>
 </div>
 
 
@@ -465,7 +668,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line30">line 30</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -490,6 +693,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Todesstatus.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -501,7 +726,7 @@
     
 
     
-    <h4 class="name" id="isColliding"><span class="type-signature"></span>isColliding<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isFalling"><span class="type-signature"></span>isFalling<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -509,7 +734,7 @@
 
 
 <div class="description">
-    <p>Prueft die Rechteck-Kollision mit einem anderen beweglichen Objekt. @param {MoveableObject} mo Vergleichsobjekt. @returns {boolean} Kollisionsstatus.</p>
+    <p>Prueft, ob das Objekt sich in der Luft abwaerts bewegt.</p>
 </div>
 
 
@@ -553,7 +778,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line40">line 40</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line66">line 66</a>
     </li></ul></dd>
     
 
@@ -578,6 +803,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Ob es faellt.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -589,7 +836,7 @@
     
 
     
-    <h4 class="name" id="isDead"><span class="type-signature"></span>isDead<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isHurt"><span class="type-signature"></span>isHurt<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -597,7 +844,7 @@
 
 
 <div class="description">
-    <p>Prueft, ob keine Energie mehr vorhanden ist. @returns {boolean} Todesstatus.</p>
+    <p>Prueft, ob die 1,5-Sekunden-Unverwundbarkeit nach einem Treffer noch aktiv ist.</p>
 </div>
 
 
@@ -641,7 +888,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line72">line 72</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
@@ -666,6 +913,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Schadenstatus.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -677,7 +946,7 @@
     
 
     
-    <h4 class="name" id="isFalling"><span class="type-signature"></span>isFalling<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="isHurtEndboss"><span class="type-signature"></span>isHurtEndboss<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -685,7 +954,7 @@
 
 
 <div class="description">
-    <p>Prueft, ob das Objekt sich abwaerts bewegt. @returns {boolean} Ob es faellt.</p>
+    <p>Prueft den Trefferzustand des Endbosses.</p>
 </div>
 
 
@@ -729,7 +998,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line35">line 35</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -754,6 +1023,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Boss-Schadenstatus.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -765,7 +1056,7 @@
     
 
     
-    <h4 class="name" id="isHurt"><span class="type-signature"></span>isHurt<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="land"><span class="type-signature"></span>land<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -773,7 +1064,7 @@
 
 
 <div class="description">
-    <p>Prueft, ob der letzte Treffer noch als kurzer Schadenzustand gilt. @returns {boolean} Schadenstatus.</p>
+    <p>Setzt das Objekt nach einem Sprung exakt auf die Bodenhoehe.</p>
 </div>
 
 
@@ -817,183 +1108,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="isHurtEndboss"><span class="type-signature"></span>isHurtEndboss<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Prueft den laengeren Trefferzustand des Endbosses. @returns {boolean} Boss-Schadenstatus.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line65">line 65</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="jump"><span class="type-signature"></span>jump<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Setzt die vertikale Geschwindigkeit fuer einen Sprung.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line89">line 89</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line49">line 49</a>
     </li></ul></dd>
     
 
@@ -1081,7 +1196,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line83">line 83</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -1169,7 +1284,205 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="models_moveable-object.class.js.html">models/moveable-object.class.js</a>, <a href="models_moveable-object.class.js.html#line77">line 77</a>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line107">line 107</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="movedDown"><span class="type-signature"></span>movedDown<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Prueft, ob sich das Objekt im letzten Gravitationsschritt nach unten bewegt hat.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Ob es gerade abwaerts kommt.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="updateGravity"><span class="type-signature"></span>updateGravity<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Fuehrt einen Gravitationsschritt aus und merkt sich die vorherige Unterkante.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="classes_moveable-object.class.js.html">classes/moveable-object.class.js</a>, <a href="classes_moveable-object.class.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -1215,13 +1528,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#init">init</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#level1">level1</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$">$</a></li><li><a href="global.html#bindMenuButtons">bindMenuButtons</a></li><li><a href="global.html#bindTouchButton">bindTouchButton</a></li><li><a href="global.html#closeDialogOnOutsideClick">closeDialogOnOutsideClick</a></li><li><a href="global.html#closeOptions">closeOptions</a></li><li><a href="global.html#closeSubDialog">closeSubDialog</a></li><li><a href="global.html#createCollectibles">createCollectibles</a></li><li><a href="global.html#createEnemies">createEnemies</a></li><li><a href="global.html#goHome">goHome</a></li><li><a href="global.html#handleGameEnded">handleGameEnded</a></li><li><a href="global.html#initControls">initControls</a></li><li><a href="global.html#initPage">initPage</a></li><li><a href="global.html#isGameRunning">isGameRunning</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#isVisible">isVisible</a></li><li><a href="global.html#level1">level1</a></li><li><a href="global.html#openOptions">openOptions</a></li><li><a href="global.html#openSubDialog">openSubDialog</a></li><li><a href="global.html#pauseGame">pauseGame</a></li><li><a href="global.html#releaseAllKeys">releaseAllKeys</a></li><li><a href="global.html#resumeGame">resumeGame</a></li><li><a href="global.html#setKey">setKey</a></li><li><a href="global.html#setMobileControls">setMobileControls</a></li><li><a href="global.html#setStartButtonsVisible">setStartButtonsVisible</a></li><li><a href="global.html#setVisible">setVisible</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#stopCurrentGame">stopCurrentGame</a></li><li><a href="global.html#syncGameOrientation">syncGameOrientation</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#updateAudioIcon">updateAudioIcon</a></li><li><a href="global.html#updateControlIcons">updateControlIcons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 09:34:33 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 13 2026 05:53:34 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -26,271 +26,261 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { AudioHub } from "../models/audio-hub.class.js";
-import { IntervalHub } from "../models/interval-hub.class.js";
-import { Keyboard } from "../models/keyboard.class.js";
-import { World } from "../models/world.class.js";
+            <pre class="prettyprint source linenums"><code>import { AudioHub } from "../classes/audio-hub.class.js";
+import { IntervalHub } from "../classes/interval-hub.class.js";
+import { World } from "../classes/world.class.js";
+import { initControls, releaseAllKeys } from "./controls.js";
 
-window.AudioHub = AudioHub;
-let canvas;
-let world;
+let world = null;
+let optionsContext = 'start';
+let pausedForPortrait = false;
 
-/** Initialisiert Canvas und Welt; blendet mobile Bedienelemente auf Desktop aus. */
-function init() {
-    canvas = document.getElementById('canvas');
-    const world = new World(canvas);
-    if(!isMobile()) {
-        document.getElementById('mobileButtons').classList.add('d-none');
-    }
+/**
+ * Kurzschreibweise fuer document.getElementById.
+ * @param {string} id Element-ID.
+ * @returns {HTMLElement} Gefundenes Element.
+ */
+function $(id) {
+    return document.getElementById(id);
 }
 
-/** Erkennt mobile Browser anhand des User-Agent-Strings. @returns {boolean} Ob ein mobiles Geraet erkannt wurde. */
+
+/**
+ * Blendet ein Element ein oder aus.
+ * @param {string} id Element-ID.
+ * @param {boolean} visible Sichtbarkeit.
+ */
+function setVisible(id, visible) {
+    $(id).classList.toggle('d-none', !visible);
+}
+
+
+/**
+ * Prueft, ob ein Element sichtbar ist.
+ * @param {string} id Element-ID.
+ * @returns {boolean} Sichtbarkeit.
+ */
+function isVisible(id) {
+    return !$(id).classList.contains('d-none');
+}
+
+
+/**
+ * Erkennt Touch-Geraete anhand von Zeigertyp und User-Agent.
+ * @returns {boolean} Ob ein mobiles Geraet erkannt wurde.
+ */
 function isMobile() {
     const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-    return regex.test(navigator.userAgent);
+    return window.matchMedia('(pointer: coarse)').matches || regex.test(navigator.userAgent);
 }
 
-/** Click-Handler fuer Stummschaltung und Audio-Icon. */
-document.getElementById('audioBtn').addEventListener('click', function() {
-    const audioImage = audioBtn.querySelector('img');
-    const isMuted = AudioHub.toggleMute();
-    if (isMuted) {
-        audioImage.src = './assets/img/icons/stumm.png';
-    } else {
-        audioImage.src = './assets/img/icons/klang.png';
-    }
-});
 
-/** Click-Handler fuer die Rueckkehr vom Spiel zum Startbildschirm. */
-document.getElementById('homeBtn').addEventListener('click', function() {
-    AudioHub.stopAll();
-    IntervalHub.stopAllInterval();
+/**
+ * Zeigt die Touch-Steuerung nur im aktiven Spiel auf Touchgeraeten.
+ * @param {boolean} visible Gewuenschte Sichtbarkeit.
+ */
+function setMobileControls(visible) {
+    setVisible('mobileButtons', visible &amp;&amp; isMobile());
+}
+
+
+/** Beendet ein laufendes Spiel samt Zeichenschleife, Timern und Sounds. */
+function stopCurrentGame() {
+    if (world) world.stop();
     world = null;
-    document.getElementById('gameOverScreen').classList.add('d-none');
-    document.getElementById('startScreen').classList.remove('d-none');
-});
-
-/** Click-Handler zum Starten eines neuen Spiels. */
-document.getElementById('startBtn').addEventListener ('click', function() {
-    init();
-    document.getElementById('startScreen').classList.add('d-none');
-    document.getElementById('ingameOpt').classList.remove('d-none');
-});
-
-/** Click-Handler zum Neustart nach einem Spielende. */
-document.getElementById('restartBtn').addEventListener('click', function() {
+    IntervalHub.stopAllInterval();
     AudioHub.stopAll();
-    document.getElementById('gameOverScreen').classList.add('d-none');
-    init();
-});
-
-/** Oeffnet das Optionsfenster vom Startbildschirm. */
-document.getElementById('optBtnStart').addEventListener('click', function() {
-    document.getElementById('startBtn').classList.add('d-none');
-    document.getElementById('optBtnStart').classList.add('d-none');
-    document.getElementById('optModal').classList.remove('d-none');
-    document.getElementById('startBtnOpt').classList.add('d-none');
-});
-
-/** Schliesst Optionen aus dem Startkontext und stellt Startbuttons wieder her. */
-document.getElementById('closeOptModalBtn').addEventListener('click', function() {
-    document.getElementById('optModal').classList.add('d-none');
-    document.getElementById('startBtn').classList.remove('d-none');
-    document.getElementById('startBtnOpt').classList.remove('d-none');
-    document.getElementById('optBtnStart').classList.remove('d-none');
-    document.getElementById('closeOptBtnIngame').classList.add('d-none');
-});
-
-/** Schliesst Optionen aus dem laufenden Spielkontext. */
-document.getElementById('closeOptBtnIngame').addEventListener('click', function() {
-    document.getElementById('optModal').classList.add('d-none');
-    document.getElementById('startBtn').classList.remove('d-none');
-    document.getElementById('startBtnOpt').classList.remove('d-none');
-    document.getElementById('optBtnStart').classList.remove('d-none');
-});
-
-/** Oeffnet Optionen als Overlay und pausiert die Spieltimer. */
-document.getElementById('optBtnOverlay').addEventListener('click', function() {
-    document.getElementById('optModal').classList.remove('d-none');
-    document.getElementById('closeOptModalBtn').classList.add('d-none');
-    document.getElementById('closeOptBtnIngame').classList.remove('d-none');
-    IntervalHub.stopAllInterval();
-});
-
-/** Startet das Spiel aus dem Optionsfenster neu und zeigt das Ingame-Overlay. */
-document.getElementById('startBtnOpt').addEventListener('click', function() {
-    AudioHub.allSounds.forEach(sound => sound.file.pause());
-    IntervalHub.stopAllInterval();
-    init();
-    document.getElementById('startScreen').classList.add('d-none');
-    document.getElementById('ingameOptOverlay').classList.remove('d-none');
-    document.getElementById('optModal').classList.add('d-none');
-});
-
-/** Zeigt die Beschreibung der Spielsteuerung. */
-document.getElementById('controlDescriptionBtn').addEventListener('click', function() {
-    document.getElementById('optModal').classList.add('d-none');
-    document.getElementById('controlDescription').classList.remove('d-none');
-});
-
-/** Schliesst die Steuerungsbeschreibung und kehrt zu den Optionen zurueck. */
-document.getElementById('closeCtrlDescBtn').addEventListener('click', function() {
-    document.getElementById('controlDescription').classList.add('d-none');
-    document.getElementById('optModal').classList.remove('d-none');
-});
-
-/** Zeigt die Spielbeschreibung. */
-document.getElementById('gameDescriptionBtn').addEventListener('click', function() {
-    document.getElementById('gameDescription').classList.remove('d-none');
-    document.getElementById('optModal').classList.add('d-none');
-});
-
-/** Schliesst die Spielbeschreibung und kehrt zu den Optionen zurueck. */
-document.getElementById('closeGameDescriptionBtn').addEventListener('click', function() {
-    document.getElementById('gameDescription').classList.add('d-none');
-    document.getElementById('optModal').classList.remove('d-none');
-});
-
-/** Zeigt die Credits und setzt deren Scrollposition per Timeout zurueck. */
-document.getElementById('creditsButton').addEventListener('click', function() {
-    document.getElementById('credits').classList.remove('d-none');
-    document.getElementById('optModal').classList.add('d-none');
-    document.getElementById('credits').scrollTop = credits.scrollHeight;
-
-    setTimeout(function(){
-        document.getElementById('credits').style.scrollBehavior = 'smooth';
-        document.getElementById('credits').scrollTop = 0;
-    }, 200);
-});
-
-/** Schliesst die Credits und kehrt zu den Optionen zurueck. */
-document.getElementById('closeCreditsBtn').addEventListener('click', function() {
-    document.getElementById('credits').classList.add('d-none');
-    document.getElementById('optModal').classList.remove('d-none');
-});
-
-/** Touch-Handler zum Aktivieren der Bewegung nach links. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('walkLeftButton').addEventListener('touchstart', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.LEFT = true;
-});
-
-/** Touch-Handler zum Beenden der Bewegung nach links. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('walkLeftButton').addEventListener('touchend', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.LEFT = false;
-});
-
-/** Touch-Handler zum Aktivieren der Bewegung nach rechts. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('walkRightButton').addEventListener('touchstart', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.RIGHT = true;
-});
-
-/** Touch-Handler zum Beenden der Bewegung nach rechts. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('walkRightButton').addEventListener('touchend', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.RIGHT = false;
-});
-
-/** Touch-Handler zum Aktivieren des Sprungs. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('jumpButton').addEventListener('touchstart', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.SPACE = true;
-});
-
-/** Touch-Handler zum Beenden des Sprungeingangs. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('jumpButton').addEventListener('touchend', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.SPACE = false;
-});
-
-/** Touch-Handler zum Aktivieren des Flaschenwurfs. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('throwButton').addEventListener('touchstart', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.B = true;
-});
-
-/** Touch-Handler zum Beenden des Flaschenwurfs. @param {TouchEvent} event Touch-Ereignis. */
-document.getElementById('throwButton').addEventListener('touchend', function(event) {
-    event.preventDefault();
-    if (event.cancelable) event.preventDefault();
-    Keyboard.B = false;
-});
-
-/** Resize-Handler, der auf mobilen Geraeten die Touch-Icons aktualisiert. */
-window.addEventListener('resize', function() {
-    if(isMobile()) {
-        document.getElementById('walkLeftButton-image').src = './assets/img/icons/mobile_left.png';
-        document.getElementById('walkLeftButton-image').style.backgroundColor = 'rgb(245, 245, 245)';
-        document.getElementById('walkRightButton-image').src = './assets/img/icons/mobile_right.png';
-        document.getElementById('walkRightButton-image').style.backgroundColor = 'rgb(245, 245, 245)';
-        document.getElementById('jumpButton-image').src = './assets/img/icons/mobile_jump.png';
-        document.getElementById('jumpButton-image').style.backgroundColor = 'rgb(245, 245, 245)';
-        document.getElementById('throwButton-image').src = './assets/img/icons/mobile_throw.png';
-        document.getElementById('throwButton-image').style.backgroundColor = 'rgb(245, 245, 245)';
-    }
-});
-
-/** Orientation-Handler fuer Hoch- und Querformatanzeige. */
-window.addEventListener('orientationchange', function() {
-    if(screen.orientation.type == 'portrait-primary') {
-        document.getElementById('rotateDeviceMsg').classList.remove('d-none');
-        document.getElementById('startScreen').classList.add('d-none');
-        document.getElementById('startBtn').classList.add('d-none');
-        document.getElementById('optBtnStart').classList.add('d-none');
-        document.getElementById('mobileButtons').classList.add('d-none');
-    } else if(screen.orientation.type == 'landscape-primary' || screen.orientation.type == 'landscape-secondary') {
-        document.getElementById('rotateDeviceMsg').classList.add('d-none');
-        document.getElementById('startScreen').classList.remove('d-none');
-        document.getElementById('startBtn').classList.remove('d-none');
-        document.getElementById('optBtnStart').classList.remove('d-none');
-        document.getElementById('mobileButtons').classList.remove('d-none');
-    }
-});
-
-if(screen.orientation.type == 'portrait-primary') {
-    document.getElementById('rotateDeviceMsg').classList.remove('d-none');
-    document.getElementById('startScreen').classList.add('d-none');
-    document.getElementById('startBtn').classList.add('d-none');
-    document.getElementById('optBtnStart').classList.add('d-none');
-    document.getElementById('mobileButtons').classList.add('d-none');
+    releaseAllKeys();
+    pausedForPortrait = false;
 }
 
-if(screen.orientation.type == 'landscape-primary') {
-    document.getElementById('rotateDeviceMsg').classList.add('d-none');
-    document.getElementById('startScreen').classList.remove('d-none');
-    document.getElementById('startBtn').classList.remove('d-none');
-    document.getElementById('optBtnStart').classList.remove('d-none');
-    document.getElementById('mobileButtons').classList.remove('d-none');
+
+/** Startet ein neues Spiel und blendet alle Menues aus. */
+function startGame() {
+    stopCurrentGame();
+    ['startScreen', 'gameOverScreen', 'optModal'].forEach(id => setVisible(id, false));
+    setVisible('ingameOpt', true);
+    setMobileControls(true);
+    world = new World($('canvas'));
 }
 
-/** Tastatur-Handler zum Zuruecksetzen der gedrueckten Steuerungsflags. @param {KeyboardEvent} e Tastaturereignis. */
-window.addEventListener("keyup", (e) => {
-    if (e.code == "Space") Keyboard.SPACE = false;
-    if (e.code == "KeyB") Keyboard.B = false;
-    if (e.code == "ArrowLeft") Keyboard.LEFT = false;
-    if (e.code == "ArrowUp") Keyboard.UP = false;
-    if (e.code == "ArrowRight") Keyboard.RIGHT = false;
-    if (e.code == "ArrowDown") Keyboard.DOWN = false;
-});
 
-/** Tastatur-Handler zum Setzen der gedrueckten Steuerungsflags. @param {KeyboardEvent} e Tastaturereignis. */
-window.addEventListener("keydown", (e) => {
-    if (e.code == "Space") Keyboard.SPACE = true;
-    if (e.code == "KeyB") Keyboard.B = true;
-    if (e.code == "ArrowLeft") Keyboard.LEFT = true;
-    if (e.code == "ArrowUp") Keyboard.UP = true;
-    if (e.code == "ArrowRight") Keyboard.RIGHT = true;
-    if (e.code == "ArrowDown") Keyboard.DOWN = true;
-});</code></pre>
+/** Beendet das Spiel und kehrt zum Startbildschirm zurueck. */
+function goHome() {
+    stopCurrentGame();
+    ['gameOverScreen', 'ingameOpt', 'optModal'].forEach(id => setVisible(id, false));
+    setMobileControls(false);
+    setVisible('startScreen', true);
+    setStartButtonsVisible(true);
+}
+
+
+/**
+ * Blendet die Buttons des Startbildschirms ein oder aus.
+ * @param {boolean} visible Sichtbarkeit.
+ */
+function setStartButtonsVisible(visible) {
+    setVisible('startBtn', visible);
+    setVisible('optBtnStart', visible);
+}
+
+
+/** Pausiert Timer, Sounds und Touch-Steuerung des laufenden Spiels. */
+function pauseGame() {
+    IntervalHub.pauseAllInterval();
+    AudioHub.stopAll();
+    releaseAllKeys();
+    setMobileControls(false);
+}
+
+
+/** Setzt ein pausiertes Spiel fort. */
+function resumeGame() {
+    IntervalHub.resumeAllInterval();
+    AudioHub.resume(AudioHub.GAME_SOUND);
+    setMobileControls(true);
+}
+
+
+/**
+ * Oeffnet das Optionsmenue im Start- oder Spielkontext.
+ * @param {'start'|'ingame'} context Kontext, aus dem das Menue geoeffnet wird.
+ */
+function openOptions(context) {
+    optionsContext = context;
+    setVisible('startBtnOpt', context === 'ingame');
+    if (context === 'start') setStartButtonsVisible(false);
+    else pauseGame();
+    setVisible('optModal', true);
+}
+
+
+/** Schliesst das Optionsmenue und stellt den vorherigen Zustand wieder her. */
+function closeOptions() {
+    setVisible('optModal', false);
+    if (optionsContext === 'start') setStartButtonsVisible(true);
+    else resumeGame();
+}
+
+
+/**
+ * Wechselt vom Optionsmenue in einen Unterdialog.
+ * @param {string} id ID des Unterdialogs.
+ */
+function openSubDialog(id) {
+    setVisible('optModal', false);
+    setVisible(id, true);
+}
+
+
+/**
+ * Schliesst einen Unterdialog und kehrt zum Optionsmenue zurueck.
+ * @param {string} id ID des Unterdialogs.
+ */
+function closeSubDialog(id) {
+    setVisible(id, false);
+    setVisible('optModal', true);
+}
+
+
+/**
+ * Schliesst den gerade offenen Dialog, wenn ausserhalb davon geklickt wird.
+ * @param {PointerEvent} event Zeigerereignis.
+ */
+function closeDialogOnOutsideClick(event) {
+    const openSub = ['controlDescription', 'gameDescription'].find(isVisible);
+    if (openSub &amp;&amp; !$(openSub).contains(event.target)) return closeSubDialog(openSub);
+    if (isVisible('optModal') &amp;&amp; !$('optModal').contains(event.target)) closeOptions();
+}
+
+
+/** Aktualisiert das Lautsprecher-Icon passend zum Stummschaltungsstatus. */
+function updateAudioIcon() {
+    const icon = AudioHub.isMuted ? 'stumm.png' : 'klang.png';
+    $('audioBtn').querySelector('img').src = `./assets/img/icons/${icon}`;
+}
+
+
+/** Schaltet alle Sounds stumm oder frei und speichert den Status. */
+function toggleMute() {
+    AudioHub.toggleMute();
+    updateAudioIcon();
+}
+
+
+/**
+ * Prueft, ob gerade eine Partie aktiv und nicht pausiert ist.
+ * @returns {boolean} Ob das Spiel laeuft.
+ */
+function isGameRunning() {
+    return world !== null &amp;&amp; !world.isStopped &amp;&amp; !isVisible('optModal') &amp;&amp; !pausedForPortrait;
+}
+
+
+/** Pausiert eine aktive Partie im Hochformat und setzt sie im Querformat fort. */
+function syncGameOrientation() {
+    if (!isMobile()) return;
+    const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+    if (isPortrait &amp;&amp; isGameRunning()) {
+        pauseGame();
+        pausedForPortrait = true;
+    } else if (!isPortrait &amp;&amp; pausedForPortrait) {
+        pausedForPortrait = false;
+        resumeGame();
+    }
+}
+
+
+/** Zeigt in der Steuerungsbeschreibung auf Touchgeraeten die Touch-Symbole. */
+function updateControlIcons() {
+    if (!isMobile()) return;
+    ['walkLeftButton', 'walkRightButton', 'jumpButton', 'throwButton'].forEach(id => {
+        const image = $(`${id}-image`);
+        image.src = $(id).querySelector('img').src;
+        image.classList.add('touch-icon');
+    });
+}
+
+
+/** Blendet nach Spielende die Spielsteuerung aus. */
+function handleGameEnded() {
+    setVisible('ingameOpt', false);
+    setMobileControls(false);
+}
+
+
+/** Registriert alle Klick-Handler der Menues und Dialoge. */
+function bindMenuButtons() {
+    $('startBtn').addEventListener('click', startGame);
+    $('restartBtn').addEventListener('click', startGame);
+    $('startBtnOpt').addEventListener('click', startGame);
+    $('homeBtn').addEventListener('click', goHome);
+    $('audioBtn').addEventListener('click', toggleMute);
+    $('optBtnStart').addEventListener('click', () => openOptions('start'));
+    $('optBtnOverlay').addEventListener('click', () => openOptions('ingame'));
+    document.querySelectorAll('[data-close-options]').forEach(btn => btn.addEventListener('click', closeOptions));
+    $('controlDescriptionBtn').addEventListener('click', () => openSubDialog('controlDescription'));
+    $('gameDescriptionBtn').addEventListener('click', () => openSubDialog('gameDescription'));
+    document.querySelectorAll('[data-close-dialog]').forEach(btn => btn.addEventListener('click',
+        () => closeSubDialog(btn.dataset.closeDialog)));
+}
+
+
+/** Initialisiert Menues, Steuerung, Audio-Status und Orientierungspruefung. */
+function initPage() {
+    bindMenuButtons();
+    initControls();
+    AudioHub.loadMuteState();
+    updateAudioIcon();
+    updateControlIcons();
+    document.addEventListener('pointerdown', closeDialogOnOutsideClick);
+    window.addEventListener('gameended', handleGameEnded);
+    window.addEventListener('resize', syncGameOrientation);
+    window.addEventListener('orientationchange', syncGameOrientation);
+}
+
+initPage();
+</code></pre>
         </article>
     </section>
 
@@ -300,13 +290,13 @@ window.addEventListener("keydown", (e) => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#init">init</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#level1">level1</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$">$</a></li><li><a href="global.html#bindMenuButtons">bindMenuButtons</a></li><li><a href="global.html#bindTouchButton">bindTouchButton</a></li><li><a href="global.html#closeDialogOnOutsideClick">closeDialogOnOutsideClick</a></li><li><a href="global.html#closeOptions">closeOptions</a></li><li><a href="global.html#closeSubDialog">closeSubDialog</a></li><li><a href="global.html#createCollectibles">createCollectibles</a></li><li><a href="global.html#createEnemies">createEnemies</a></li><li><a href="global.html#goHome">goHome</a></li><li><a href="global.html#handleGameEnded">handleGameEnded</a></li><li><a href="global.html#initControls">initControls</a></li><li><a href="global.html#initPage">initPage</a></li><li><a href="global.html#isGameRunning">isGameRunning</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#isVisible">isVisible</a></li><li><a href="global.html#level1">level1</a></li><li><a href="global.html#openOptions">openOptions</a></li><li><a href="global.html#openSubDialog">openSubDialog</a></li><li><a href="global.html#pauseGame">pauseGame</a></li><li><a href="global.html#releaseAllKeys">releaseAllKeys</a></li><li><a href="global.html#resumeGame">resumeGame</a></li><li><a href="global.html#setKey">setKey</a></li><li><a href="global.html#setMobileControls">setMobileControls</a></li><li><a href="global.html#setStartButtonsVisible">setStartButtonsVisible</a></li><li><a href="global.html#setVisible">setVisible</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#stopCurrentGame">stopCurrentGame</a></li><li><a href="global.html#syncGameOrientation">syncGameOrientation</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#updateAudioIcon">updateAudioIcon</a></li><li><a href="global.html#updateControlIcons">updateControlIcons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 09:34:33 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 13 2026 05:53:34 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>
