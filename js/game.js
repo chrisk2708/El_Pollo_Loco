@@ -7,6 +7,14 @@ let world = null;
 let optionsContext = 'start';
 let pausedForPortrait = false;
 
+/** Zuordnung der Menue-Buttons zu ihren Unterdialogen. */
+const SUB_DIALOGS = {
+    controlDescriptionBtn: 'controlDescription',
+    gameDescriptionBtn: 'gameDescription',
+    imprintBtn: 'imprintDialog',
+    privacyBtn: 'privacyDialog'
+};
+
 /**
  * Kurzschreibweise fuer document.getElementById.
  * @param {string} id Element-ID.
@@ -121,6 +129,7 @@ function resumeGame() {
 function openOptions(context) {
     optionsContext = context;
     setVisible('startBtnOpt', context === 'ingame');
+    setVisible('leaveBtnOpt', context === 'ingame');
     if (context === 'start') setStartButtonsVisible(false);
     else pauseGame();
     setVisible('optModal', true);
@@ -160,7 +169,7 @@ function closeSubDialog(id) {
  * @param {PointerEvent} event Zeigerereignis.
  */
 function closeDialogOnOutsideClick(event) {
-    const openSub = ['controlDescription', 'gameDescription'].find(isVisible);
+    const openSub = Object.values(SUB_DIALOGS).find(isVisible);
     if (openSub && !$(openSub).contains(event.target)) return closeSubDialog(openSub);
     if (isVisible('optModal') && !$('optModal').contains(event.target)) closeOptions();
 }
@@ -227,12 +236,19 @@ function bindMenuButtons() {
     $('restartBtn').addEventListener('click', startGame);
     $('startBtnOpt').addEventListener('click', startGame);
     $('homeBtn').addEventListener('click', goHome);
+    $('leaveBtnOpt').addEventListener('click', goHome);
     $('audioBtn').addEventListener('click', toggleMute);
     $('optBtnStart').addEventListener('click', () => openOptions('start'));
     $('optBtnOverlay').addEventListener('click', () => openOptions('ingame'));
+    bindDialogButtons();
+}
+
+
+/** Registriert die Buttons zum Oeffnen und Schliessen der Unterdialoge. */
+function bindDialogButtons() {
     document.querySelectorAll('[data-close-options]').forEach(btn => btn.addEventListener('click', closeOptions));
-    $('controlDescriptionBtn').addEventListener('click', () => openSubDialog('controlDescription'));
-    $('gameDescriptionBtn').addEventListener('click', () => openSubDialog('gameDescription'));
+    Object.entries(SUB_DIALOGS).forEach(([btnId, dialogId]) =>
+        $(btnId).addEventListener('click', () => openSubDialog(dialogId)));
     document.querySelectorAll('[data-close-dialog]').forEach(btn => btn.addEventListener('click',
         () => closeSubDialog(btn.dataset.closeDialog)));
 }
