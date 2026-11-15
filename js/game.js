@@ -123,15 +123,15 @@ function resumeGame() {
 
 
 /**
- * Oeffnet das Optionsmenue im Start- oder Spielkontext.
- * @param {'start'|'ingame'} context Kontext, aus dem das Menue geoeffnet wird.
+ * Oeffnet das Optionsmenue im Start-, Spiel- oder Endkontext.
+ * @param {'start'|'ingame'|'ended'} context Kontext, aus dem das Menue geoeffnet wird.
  */
 function openOptions(context) {
     optionsContext = context;
-    setVisible('startBtnOpt', context === 'ingame');
-    setVisible('leaveBtnOpt', context === 'ingame');
+    setVisible('startBtnOpt', context !== 'start');
+    setVisible('leaveBtnOpt', context !== 'start');
     if (context === 'start') setStartButtonsVisible(false);
-    else pauseGame();
+    if (context === 'ingame') pauseGame();
     setVisible('optModal', true);
 }
 
@@ -140,7 +140,13 @@ function openOptions(context) {
 function closeOptions() {
     setVisible('optModal', false);
     if (optionsContext === 'start') setStartButtonsVisible(true);
-    else resumeGame();
+    if (optionsContext === 'ingame') resumeGame();
+}
+
+
+/** Oeffnet das Optionsmenue waehrend oder nach einer Partie. */
+function openGameOptions() {
+    openOptions(world && world.isStopped ? 'ended' : 'ingame');
 }
 
 
@@ -223,9 +229,8 @@ function updateControlIcons() {
 }
 
 
-/** Blendet nach Spielende die Spielsteuerung aus. */
+/** Blendet nach Spielende die Touch-Steuerung aus; Menue- und Ton-Button bleiben sichtbar. */
 function handleGameEnded() {
-    setVisible('ingameOpt', false);
     setMobileControls(false);
 }
 
@@ -239,7 +244,7 @@ function bindMenuButtons() {
     $('leaveBtnOpt').addEventListener('click', goHome);
     $('audioBtn').addEventListener('click', toggleMute);
     $('optBtnStart').addEventListener('click', () => openOptions('start'));
-    $('optBtnOverlay').addEventListener('click', () => openOptions('ingame'));
+    $('optBtnOverlay').addEventListener('click', openGameOptions);
     bindDialogButtons();
 }
 

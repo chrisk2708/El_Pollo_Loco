@@ -7,6 +7,7 @@ import { ThrowableObject } from "./throwable-object.class.js";
 import { Coin } from "./coin.class.js";
 import { SalsaBottle } from "./salsa-bottle.class.js";
 import { StatusBar } from "./statusbar.class.js";
+import { CounterDisplay } from "./counter-display.class.js";
 import { AudioHub } from "./audio-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { ImageHub } from "./img-hub.class.js";
@@ -17,14 +18,12 @@ export class World {
     canvas;
     level;
     character = new Character();
-    statusbarBottles = new StatusBar("bottles", 10, 0, 0);
-    statusbarHealth = new StatusBar("health", 10, 40);
-    statusbarCoins = new StatusBar("coins", 10, 80, 0);
+    statusbarHealth = new StatusBar("health", 10, 0);
+    bottleCounter = new CounterDisplay(ImageHub.STATUSBAR.counters.bottle, 24, 62);
+    coinCounter = new CounterDisplay(ImageHub.STATUSBAR.counters.coin, 100, 66);
     statusbarEndboss = new StatusBar("endBoss", 740, 0);
     coins = 0;
     bottles = 0;
-    totalCoins = 1;
-    totalBottles = 1;
     throwableObjects = [];
     lastThrowTime = 0;
     isFinished = false;
@@ -40,16 +39,9 @@ export class World {
         this.canvas = canvas;
         this.level = level1();
         this.character.world = this;
-        this.countCollectibles();
         this.draw();
         this.run();
         AudioHub.playOne(AudioHub.GAME_SOUND);
-    }
-
-    /** Zaehlt Muenzen und Flaschen des Levels fuer die prozentuale Statusanzeige. */
-    countCollectibles() {
-        this.totalCoins = this.level.collectibles.filter(item => item instanceof Coin).length || 1;
-        this.totalBottles = this.level.collectibles.filter(item => item instanceof SalsaBottle).length || 1;
     }
 
     /** Zeichnet einen Frame und plant den naechsten Render-Frame, solange die Welt laeuft. */
@@ -71,9 +63,9 @@ export class World {
         this.addObjectsToMap(this.throwableObjects);
     }
 
-    /** Zeichnet die HUD-Statusleisten und die Bossleiste nur, wenn der Boss sichtbar ist. */
+    /** Zeichnet Lebensleiste, Flaschen- und Muenzzahl sowie die Bossleiste, wenn der Boss sichtbar ist. */
     drawStatusBars() {
-        const statusbars = [this.statusbarCoins, this.statusbarBottles, this.statusbarHealth];
+        const statusbars = [this.statusbarHealth, this.bottleCounter, this.coinCounter];
         if (this.isEndbossVisible()) statusbars.push(this.statusbarEndboss);
         statusbars.forEach(statusbar => this.addToMap(statusbar));
     }
@@ -224,7 +216,7 @@ export class World {
     /** Erhoeht die Muenzzahl, aktualisiert die Anzeige und spielt den Sound. */
     collectCoin() {
         this.coins++;
-        this.statusbarCoins.setPercentage(this.coins * 100 / this.totalCoins);
+        this.coinCounter.setValue(this.coins);
         AudioHub.playOne(AudioHub.COIN_SOUND);
     }
 
@@ -235,9 +227,9 @@ export class World {
         AudioHub.playOne(AudioHub.BOTL_PICK);
     }
 
-    /** Aktualisiert die Flaschenanzeige anhand des aktuellen Vorrats. */
+    /** Aktualisiert die Flaschenzahl im HUD. */
     updateBottleBar() {
-        this.statusbarBottles.setPercentage(this.bottles * 100 / this.totalBottles);
+        this.bottleCounter.setValue(this.bottles);
     }
 
     /** Erzeugt bei Eingabe eine Wurf-Flasche, sofern Vorrat und Abklingzeit es erlauben. */
