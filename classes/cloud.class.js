@@ -1,9 +1,9 @@
 import { MoveableObject } from './moveable-object.class.js';
 
-/** Animierte Wolke, die kontinuierlich nach links durch die Welt zieht. */
+/** Animated cloud that continuously drifts to the left through the world. */
 export class Cloud extends MoveableObject {
 
-    /** Erzeugt eine Wolke mit Bild und Startposition. @param {string} imagePath Bildpfad. @param {number} x Horizontale Position. */
+    /** Creates a cloud with image and start position. @param {string} imagePath Image path. @param {number} x Horizontal position. */
     constructor(imagePath, x) {
         super().loadImage(imagePath);
         this.x = x;
@@ -20,7 +20,7 @@ export class Cloud extends MoveableObject {
         this.animate();
     }
 
-    /** Registriert die Bewegung und setzt die Wolke nach dem Verlassen der Welt zurueck. */
+    /** Registers the movement and resets the cloud after it leaves the world. */
     animate() {
         this.registerInterval(() => {
             this.moveLeft();

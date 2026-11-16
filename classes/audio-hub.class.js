@@ -1,6 +1,6 @@
 import { MyAudio } from "./audio.class.js";
 
-/** Zentrale statische Verwaltung aller Spiel-Audios, ihrer Wiedergabe und der Stummschaltung. */
+/** Central static management of all game sounds, their playback and muting. */
 export class AudioHub {
     static GAME_SOUND = new MyAudio('./assets/audio/background_music.mp3', true, 0.2);
     static WALK_SOUND = new MyAudio('./assets/audio/walking.mp3', true, 0.25);
@@ -28,7 +28,7 @@ export class AudioHub {
     static storageKey = 'elPolloLocoMuted';
     static isMuted = true;
 
-    /** Liest den gespeicherten Stummschaltungsstatus und wendet ihn auf alle Sounds an. */
+    /** Reads the saved mute state and applies it to all sounds. */
     static loadMuteState() {
         let stored = null;
         try {
@@ -40,8 +40,8 @@ export class AudioHub {
     }
 
     /**
-     * Setzt die Stummschaltung fuer alle Sounds und speichert sie im Local Storage.
-     * @param {boolean} muted Neuer Status.
+     * Sets the mute state for all sounds and saves it in local storage.
+     * @param {boolean} muted New state.
      */
     static setMuted(muted) {
         AudioHub.isMuted = muted;
@@ -54,8 +54,8 @@ export class AudioHub {
     }
 
     /**
-     * Schaltet alle Sounds gemeinsam stumm oder frei.
-     * @returns {boolean} Neuer Stummschaltungsstatus.
+     * Mutes or unmutes all sounds together.
+     * @returns {boolean} New mute state.
      */
     static toggleMute() {
         AudioHub.setMuted(!AudioHub.isMuted);
@@ -63,8 +63,8 @@ export class AudioHub {
     }
 
     /**
-     * Startet ein Audio ab Position null.
-     * @param {MyAudio} sound Audioobjekt.
+     * Plays a sound from position zero.
+     * @param {MyAudio} sound Audio object.
      */
     static playOne(sound) {
         sound.file.currentTime = 0;
@@ -72,22 +72,22 @@ export class AudioHub {
     }
 
     /**
-     * Setzt ein Audio an der aktuellen Position fort und ignoriert Autoplay-Sperren.
-     * @param {MyAudio} sound Audioobjekt.
+     * Resumes a sound at its current position and ignores autoplay restrictions.
+     * @param {MyAudio} sound Audio object.
      */
     static resume(sound) {
         const playPromise = sound.file.play();
         if (playPromise) playPromise.catch(() => {});
     }
 
-    /** Pausiert alle registrierten Audioquellen. */
+    /** Pauses all registered audio sources. */
     static stopAll() {
         AudioHub.allSounds.forEach(sound => sound.file.pause());
     }
 
     /**
-     * Pausiert eine einzelne Audioquelle.
-     * @param {MyAudio} sound Audioobjekt.
+     * Pauses a single audio source.
+     * @param {MyAudio} sound Audio object.
      */
     static stopOne(sound) {
         sound.file.pause();

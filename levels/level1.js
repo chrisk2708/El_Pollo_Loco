@@ -14,8 +14,8 @@ const COIN_POSITIONS = [
 const BOTTLE_X_POSITIONS = [400, 450, 750, 800, 1000, 1200, 1250, 1270, 1300, 1500, 1550, 1600];
 
 /**
- * Erstellt alle Gegner fuer Level 1.
- * @returns {Array<Chicken|SmallChicken|Endboss>} Gegnerliste.
+ * Creates all enemies for level 1.
+ * @returns {Array<Chicken|SmallChicken|Endboss>} List of enemies.
  */
 function createEnemies() {
     const chickens = Array.from({ length: 10 }, () => new Chicken());
@@ -25,8 +25,8 @@ function createEnemies() {
 
 
 /**
- * Erstellt alle Muenzen und Flaschen fuer Level 1.
- * @returns {Array<Coin|SalsaBottle>} Sammelobjekte.
+ * Creates all coins and bottles for level 1.
+ * @returns {Array<Coin|SalsaBottle>} Collectible objects.
  */
 function createCollectibles() {
     const coins = COIN_POSITIONS.map(([x, y]) => new Coin(x, y));
@@ -36,8 +36,8 @@ function createCollectibles() {
 
 
 /**
- * Erstellt die konkrete Gegner- und Sammelobjektkonfiguration fuer Level 1.
- * @returns {Level} Vollstaendig initialisiertes Level.
+ * Creates the concrete enemy and collectible configuration for level 1.
+ * @returns {Level} Fully initialized level.
  */
 export function level1() {
     return new Level(4, createEnemies(), createCollectibles());

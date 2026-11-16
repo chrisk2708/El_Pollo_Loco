@@ -1,12 +1,12 @@
-/** Repraesentiert eine einzelne Audioquelle des Spiels und ihre Wiedergabeeinstellungen. */
+/** Represents a single audio source of the game and its playback settings. */
 export class MyAudio {
     file;
 
     /**
-     * Erzeugt ein HTMLAudioElement und konfiguriert Schleife und Lautstaerke.
-     * @param {string} path Audioquellpfad.
-     * @param {boolean} loop Ob die Quelle wiederholt wird.
-     * @param {number} volume Lautstaerke zwischen 0 und 1.
+     * Creates an HTMLAudioElement and configures loop and volume.
+     * @param {string} path Audio source path.
+     * @param {boolean} loop Whether the source is looped.
+     * @param {number} volume Volume between 0 and 1.
      */
     constructor(path, loop = false, volume = 0.3) {
         this.file = new Audio(path);

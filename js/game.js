@@ -7,7 +7,7 @@ let world = null;
 let optionsContext = 'start';
 let pausedForPortrait = false;
 
-/** Zuordnung der Menue-Buttons zu ihren Unterdialogen. */
+/** Maps the menu buttons to their sub dialogs. */
 const SUB_DIALOGS = {
     controlDescriptionBtn: 'controlDescription',
     gameDescriptionBtn: 'gameDescription',
@@ -16,9 +16,9 @@ const SUB_DIALOGS = {
 };
 
 /**
- * Kurzschreibweise fuer document.getElementById.
- * @param {string} id Element-ID.
- * @returns {HTMLElement} Gefundenes Element.
+ * Shorthand for document.getElementById.
+ * @param {string} id Element ID.
+ * @returns {HTMLElement} Found element.
  */
 function $(id) {
     return document.getElementById(id);
@@ -26,9 +26,9 @@ function $(id) {
 
 
 /**
- * Blendet ein Element ein oder aus.
- * @param {string} id Element-ID.
- * @param {boolean} visible Sichtbarkeit.
+ * Shows or hides an element.
+ * @param {string} id Element ID.
+ * @param {boolean} visible Visibility.
  */
 function setVisible(id, visible) {
     $(id).classList.toggle('d-none', !visible);
@@ -36,9 +36,9 @@ function setVisible(id, visible) {
 
 
 /**
- * Prueft, ob ein Element sichtbar ist.
- * @param {string} id Element-ID.
- * @returns {boolean} Sichtbarkeit.
+ * Checks whether an element is visible.
+ * @param {string} id Element ID.
+ * @returns {boolean} Visibility.
  */
 function isVisible(id) {
     return !$(id).classList.contains('d-none');
@@ -46,8 +46,8 @@ function isVisible(id) {
 
 
 /**
- * Erkennt Touch-Geraete anhand von Zeigertyp und User-Agent.
- * @returns {boolean} Ob ein mobiles Geraet erkannt wurde.
+ * Detects touch devices by pointer type and user agent.
+ * @returns {boolean} Whether a mobile device was detected.
  */
 function isMobile() {
     const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
@@ -56,15 +56,15 @@ function isMobile() {
 
 
 /**
- * Zeigt die Touch-Steuerung nur im aktiven Spiel auf Touchgeraeten.
- * @param {boolean} visible Gewuenschte Sichtbarkeit.
+ * Shows the touch controls only during an active game on touch devices.
+ * @param {boolean} visible Desired visibility.
  */
 function setMobileControls(visible) {
     setVisible('mobileButtons', visible && isMobile());
 }
 
 
-/** Beendet ein laufendes Spiel samt Zeichenschleife, Timern und Sounds. */
+/** Stops a running game including render loop, timers and sounds. */
 function stopCurrentGame() {
     if (world) world.stop();
     world = null;
@@ -75,7 +75,7 @@ function stopCurrentGame() {
 }
 
 
-/** Startet ein neues Spiel und blendet alle Menues aus. */
+/** Starts a new game and hides all menus. */
 function startGame() {
     stopCurrentGame();
     ['startScreen', 'gameOverScreen', 'optModal'].forEach(id => setVisible(id, false));
@@ -85,7 +85,7 @@ function startGame() {
 }
 
 
-/** Beendet das Spiel und kehrt zum Startbildschirm zurueck. */
+/** Ends the game and returns to the start screen. */
 function goHome() {
     stopCurrentGame();
     ['gameOverScreen', 'ingameOpt', 'optModal'].forEach(id => setVisible(id, false));
@@ -96,8 +96,8 @@ function goHome() {
 
 
 /**
- * Blendet die Buttons des Startbildschirms ein oder aus.
- * @param {boolean} visible Sichtbarkeit.
+ * Shows or hides the buttons of the start screen.
+ * @param {boolean} visible Visibility.
  */
 function setStartButtonsVisible(visible) {
     setVisible('startBtn', visible);
@@ -106,7 +106,7 @@ function setStartButtonsVisible(visible) {
 }
 
 
-/** Pausiert Timer, Sounds und Touch-Steuerung des laufenden Spiels. */
+/** Pauses timers, sounds and touch controls of the running game. */
 function pauseGame() {
     IntervalHub.pauseAllInterval();
     AudioHub.stopAll();
@@ -115,7 +115,7 @@ function pauseGame() {
 }
 
 
-/** Setzt ein pausiertes Spiel fort. */
+/** Resumes a paused game. */
 function resumeGame() {
     IntervalHub.resumeAllInterval();
     AudioHub.resume(AudioHub.GAME_SOUND);
@@ -124,8 +124,8 @@ function resumeGame() {
 
 
 /**
- * Oeffnet das Optionsmenue im Start-, Spiel- oder Endkontext.
- * @param {'start'|'ingame'|'ended'} context Kontext, aus dem das Menue geoeffnet wird.
+ * Opens the options menu in the start, ingame or ended context.
+ * @param {'start'|'ingame'|'ended'} context Context from which the menu is opened.
  */
 function openOptions(context) {
     optionsContext = context;
@@ -137,7 +137,7 @@ function openOptions(context) {
 }
 
 
-/** Schliesst das Optionsmenue und stellt den vorherigen Zustand wieder her. */
+/** Closes the options menu and restores the previous state. */
 function closeOptions() {
     setVisible('optModal', false);
     if (optionsContext === 'start') setStartButtonsVisible(true);
@@ -145,15 +145,15 @@ function closeOptions() {
 }
 
 
-/** Oeffnet das Optionsmenue waehrend oder nach einer Partie. */
+/** Opens the options menu during or after a game. */
 function openGameOptions() {
     openOptions(world && world.isStopped ? 'ended' : 'ingame');
 }
 
 
 /**
- * Wechselt vom Optionsmenue in einen Unterdialog.
- * @param {string} id ID des Unterdialogs.
+ * Switches from the options menu to a sub dialog.
+ * @param {string} id ID of the sub dialog.
  */
 function openSubDialog(id) {
     setVisible('optModal', false);
@@ -162,8 +162,8 @@ function openSubDialog(id) {
 
 
 /**
- * Schliesst einen Unterdialog und kehrt zum Optionsmenue zurueck.
- * @param {string} id ID des Unterdialogs.
+ * Closes a sub dialog and returns to the options menu.
+ * @param {string} id ID of the sub dialog.
  */
 function closeSubDialog(id) {
     setVisible(id, false);
@@ -172,8 +172,8 @@ function closeSubDialog(id) {
 
 
 /**
- * Schliesst den gerade offenen Dialog, wenn ausserhalb davon geklickt wird.
- * @param {PointerEvent} event Zeigerereignis.
+ * Closes the currently open dialog when clicking outside of it.
+ * @param {PointerEvent} event Pointer event.
  */
 function closeDialogOnOutsideClick(event) {
     const openSub = Object.values(SUB_DIALOGS).find(isVisible);
@@ -182,14 +182,14 @@ function closeDialogOnOutsideClick(event) {
 }
 
 
-/** Aktualisiert das Lautsprecher-Icon passend zum Stummschaltungsstatus. */
+/** Updates the speaker icon according to the mute state. */
 function updateAudioIcon() {
     const icon = AudioHub.isMuted ? 'stumm.png' : 'klang.png';
     $('audioBtn').querySelector('img').src = `./assets/img/icons/${icon}`;
 }
 
 
-/** Schaltet alle Sounds stumm oder frei und speichert den Status. */
+/** Mutes or unmutes all sounds and saves the state. */
 function toggleMute() {
     AudioHub.toggleMute();
     updateAudioIcon();
@@ -197,15 +197,15 @@ function toggleMute() {
 
 
 /**
- * Prueft, ob gerade eine Partie aktiv und nicht pausiert ist.
- * @returns {boolean} Ob das Spiel laeuft.
+ * Checks whether a game is currently active and not paused.
+ * @returns {boolean} Whether the game is running.
  */
 function isGameRunning() {
     return world !== null && !world.isStopped && !isVisible('optModal') && !pausedForPortrait;
 }
 
 
-/** Pausiert eine aktive Partie im Hochformat und setzt sie im Querformat fort. */
+/** Pauses an active game in portrait mode and resumes it in landscape mode. */
 function syncGameOrientation() {
     if (!isMobile()) return;
     const isPortrait = window.matchMedia('(orientation: portrait)').matches;
@@ -219,7 +219,7 @@ function syncGameOrientation() {
 }
 
 
-/** Zeigt in der Steuerungsbeschreibung auf Touchgeraeten die Touch-Symbole. */
+/** Shows the touch icons in the control description on touch devices. */
 function updateControlIcons() {
     if (!isMobile()) return;
     ['walkLeftButton', 'walkRightButton', 'jumpButton', 'throwButton'].forEach(id => {
@@ -231,8 +231,8 @@ function updateControlIcons() {
 
 
 /**
- * Prueft, ob der Vollbildmodus aktiv ist (nativ oder als CSS-Ersatz).
- * @returns {boolean} Vollbildstatus.
+ * Checks whether fullscreen mode is active (native or as CSS fallback).
+ * @returns {boolean} Fullscreen state.
  */
 function isFullscreen() {
     return document.body.classList.contains('fullscreen');
@@ -240,8 +240,8 @@ function isFullscreen() {
 
 
 /**
- * Schaltet die Vollbild-Darstellung um und passt Buttons an.
- * @param {boolean} active Gewuenschter Status.
+ * Toggles the fullscreen layout and updates the buttons.
+ * @param {boolean} active Desired state.
  */
 function setFullscreenClass(active) {
     document.body.classList.toggle('fullscreen', active);
@@ -253,8 +253,8 @@ function setFullscreenClass(active) {
 
 
 /**
- * Startet oder beendet den Vollbildmodus. Ohne Fullscreen-API (z. B. iPhone)
- * wird nur die CSS-Darstellung umgeschaltet.
+ * Starts or exits fullscreen mode. Without the Fullscreen API (e.g. iPhone)
+ * only the CSS layout is toggled.
  */
 function toggleFullscreen() {
     const root = document.documentElement;
@@ -265,19 +265,19 @@ function toggleFullscreen() {
 }
 
 
-/** Gleicht die CSS-Klasse an, wenn der Browser das Vollbild selbst beendet (z. B. per Esc). */
+/** Syncs the CSS class when the browser exits fullscreen itself (e.g. via Esc). */
 function syncFullscreenState() {
     setFullscreenClass(Boolean(document.fullscreenElement));
 }
 
 
-/** Blendet nach Spielende die Touch-Steuerung aus; Menue- und Ton-Button bleiben sichtbar. */
+/** Hides the touch controls after the game ends; menu and sound buttons stay visible. */
 function handleGameEnded() {
     setMobileControls(false);
 }
 
 
-/** Registriert alle Klick-Handler der Menues und Dialoge. */
+/** Registers all click handlers of the menus and dialogs. */
 function bindMenuButtons() {
     $('startBtn').addEventListener('click', startGame);
     $('restartBtn').addEventListener('click', startGame);
@@ -292,7 +292,7 @@ function bindMenuButtons() {
 }
 
 
-/** Registriert die Buttons zum Oeffnen und Schliessen der Unterdialoge. */
+/** Registers the buttons for opening and closing the sub dialogs. */
 function bindDialogButtons() {
     document.querySelectorAll('[data-close-options]').forEach(btn => btn.addEventListener('click', closeOptions));
     Object.entries(SUB_DIALOGS).forEach(([btnId, dialogId]) =>
@@ -302,7 +302,7 @@ function bindDialogButtons() {
 }
 
 
-/** Initialisiert Menues, Steuerung, Audio-Status und Orientierungspruefung. */
+/** Initializes menus, controls, audio state and orientation check. */
 function initPage() {
     bindMenuButtons();
     initControls();

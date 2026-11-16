@@ -1,17 +1,17 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
 
-/** Zeigt einen prozentualen Spielwert mit dem passenden Statusleistenbild an. */
+/** Shows a percentage game value with the matching status bar image. */
 export class StatusBar extends DrawableObject {
     percentage;
     images = [];
 
     /**
-     * Erzeugt eine Statusleiste fuer einen Asset-Typ und Startwert.
-     * @param {string} type Statusleisten-Schluessel.
-     * @param {number} x Horizontale Position.
-     * @param {number} y Vertikale Position.
-     * @param {number} percentage Anfangswert.
+     * Creates a status bar for an asset type and start value.
+     * @param {string} type Status bar key.
+     * @param {number} x Horizontal position.
+     * @param {number} y Vertical position.
+     * @param {number} percentage Initial value.
      */
     constructor(type, x, y, percentage = 100) {
         super();
@@ -25,8 +25,8 @@ export class StatusBar extends DrawableObject {
     }
 
     /**
-     * Aktualisiert Wert und angezeigtes Bild.
-     * @param {number} percentage Neuer Prozentwert.
+     * Updates the value and the displayed image.
+     * @param {number} percentage New percentage.
      */
     setPercentage(percentage) {
         this.percentage = Math.max(0, Math.min(100, percentage));
@@ -34,8 +34,8 @@ export class StatusBar extends DrawableObject {
     }
 
     /**
-     * Zeichnet die Lebensleiste prozentgenau, alle anderen Leisten in 20%-Stufen.
-     * @param {CanvasRenderingContext2D} ctx Zeichenkontext.
+     * Draws the health bar exactly by percentage, all other bars in 20% steps.
+     * @param {CanvasRenderingContext2D} ctx Drawing context.
      */
     draw(ctx) {
         const emptyImage = this.imageCache[this.images[0]];
@@ -47,9 +47,9 @@ export class StatusBar extends DrawableObject {
     }
 
     /**
-     * Zeichnet den gefuellten Anteil der Leiste per Clipping.
-     * @param {CanvasRenderingContext2D} ctx Zeichenkontext.
-     * @param {HTMLImageElement} fullImage Bild der vollen Leiste.
+     * Draws the filled part of the bar using clipping.
+     * @param {CanvasRenderingContext2D} ctx Drawing context.
+     * @param {HTMLImageElement} fullImage Image of the full bar.
      */
     drawFilledPart(ctx, fullImage) {
         const barX = this.x + this.width * 0.13;
@@ -64,17 +64,17 @@ export class StatusBar extends DrawableObject {
     }
 
     /**
-     * Prueft, ob ein Bild vollstaendig geladen ist.
-     * @param {HTMLImageElement} image Bild.
-     * @returns {boolean} Ladestatus.
+     * Checks whether an image is fully loaded.
+     * @param {HTMLImageElement} image Image.
+     * @returns {boolean} Load state.
      */
     isLoaded(image) {
         return image.complete && image.naturalWidth > 0;
     }
 
     /**
-     * Ordnet den Prozentwert einem der sechs Statusbilder zu.
-     * @returns {number} Bildindex von 0 bis 5.
+     * Maps the percentage to one of the six status images.
+     * @returns {number} Image index from 0 to 5.
      */
     resolveImageIndex() {
         if (this.percentage >= 100) return 5;

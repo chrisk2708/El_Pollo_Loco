@@ -30,7 +30,7 @@
     
         <h2><span class="attribs"><span class="type-signature"></span></span>World<span class="signature">(canvas)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><p>Zentrale Spielwelt fuer Rendering, Kollisionen, Sammelobjekte und Spielende.</p></div>
+            <div class="class-description"><p>Central game world for rendering, collisions, collectibles and game end.</p></div>
         
     
 </header>
@@ -53,7 +53,7 @@
 
 
 <div class="description">
-    <p>Initialisiert Canvas, Level, Charakterbindung, Spielschleife und Hintergrundmusik.</p>
+    <p>Initializes canvas, level, character binding, game loop and background music.</p>
 </div>
 
 
@@ -105,7 +105,7 @@
 
             
 
-            <td class="description last"><p>Ziel-Canvas.</p></td>
+            <td class="description last"><p>Target canvas.</p></td>
         </tr>
 
     
@@ -217,7 +217,7 @@
 
 
 <div class="description">
-    <p>Zeichnet eine Objektliste einzeln auf die Weltkarte.</p>
+    <p>Draws a list of objects one by one onto the world map.</p>
 </div>
 
 
@@ -269,7 +269,7 @@
 
             
 
-            <td class="description last"><p>Zu zeichnende Objekte.</p></td>
+            <td class="description last"><p>Objects to draw.</p></td>
         </tr>
 
     
@@ -354,7 +354,7 @@
 
 
 <div class="description">
-    <p>Zeichnet ein Objekt, aktualisiert seinen Kollisionsrahmen und spiegelt es bei Bedarf.</p>
+    <p>Draws an object, updates its collision frame and mirrors it if needed.</p>
 </div>
 
 
@@ -406,7 +406,7 @@
 
             
 
-            <td class="description last"><p>Objekt.</p></td>
+            <td class="description last"><p>Object.</p></td>
         </tr>
 
     
@@ -491,7 +491,7 @@
 
 
 <div class="description">
-    <p>Laesst eine Flasche zerplatzen und entfernt sie nach der Spritzanimation.</p>
+    <p>Lets a bottle burst and removes it after the splash animation.</p>
 </div>
 
 
@@ -543,7 +543,7 @@
 
             
 
-            <td class="description last"><p>Flasche.</p></td>
+            <td class="description last"><p>Bottle.</p></td>
         </tr>
 
     
@@ -628,7 +628,7 @@
 
 
 <div class="description">
-    <p>Erzeugt bei Eingabe eine Wurf-Flasche, sofern Vorrat und Abklingzeit es erlauben.</p>
+    <p>Creates a thrown bottle on input if supply and cooldown allow it.</p>
 </div>
 
 
@@ -716,7 +716,7 @@
 
 
 <div class="description">
-    <p>Prueft fliegende Flaschen auf Gegnertreffer und Bodenkontakt.</p>
+    <p>Checks flying bottles for enemy hits and ground contact.</p>
 </div>
 
 
@@ -804,7 +804,7 @@
 
 
 <div class="description">
-    <p>Sucht kollidierte Sammelobjekte und verarbeitet sie.</p>
+    <p>Finds collided collectibles and processes them.</p>
 </div>
 
 
@@ -892,7 +892,7 @@
 
 
 <div class="description">
-    <p>Steuert den Endboss und prueft alle Gegner auf Kollision mit dem Charakter.</p>
+    <p>Controls the final boss and checks all enemies for collision with the character.</p>
 </div>
 
 
@@ -980,7 +980,7 @@
 
 
 <div class="description">
-    <p>Erhoeht die Flaschenzahl, aktualisiert die Anzeige und spielt den Sound.</p>
+    <p>Increases the bottle count, updates the display and plays the sound.</p>
 </div>
 
 
@@ -1068,7 +1068,7 @@
 
 
 <div class="description">
-    <p>Erhoeht die Muenzzahl, aktualisiert die Anzeige und spielt den Sound.</p>
+    <p>Increases the coin count, updates the display and plays the sound.</p>
 </div>
 
 
@@ -1156,7 +1156,7 @@
 
 
 <div class="description">
-    <p>Entfernt das eingesammelte Objekt und zaehlt es als Muenze oder Flasche.</p>
+    <p>Removes the collected object and counts it as a coin or bottle.</p>
 </div>
 
 
@@ -1208,7 +1208,7 @@
 
             
 
-            <td class="description last"><p>Sammelobjekt.</p></td>
+            <td class="description last"><p>Collectible object.</p></td>
         </tr>
 
     
@@ -1293,7 +1293,7 @@
 
 
 <div class="description">
-    <p>Zieht dem Charakter je nach Gegnertyp Energie ab, sofern er nicht unverwundbar ist.</p>
+    <p>Reduces the character's energy depending on the enemy type unless it is invulnerable.</p>
 </div>
 
 
@@ -1345,7 +1345,7 @@
 
             
 
-            <td class="description last"><p>Angreifer.</p></td>
+            <td class="description last"><p>Attacker.</p></td>
         </tr>
 
     
@@ -1430,7 +1430,7 @@
 
 
 <div class="description">
-    <p>Verarbeitet Boss-Schaden, HUD-Aktualisierung sowie Treffer- oder Todessound.</p>
+    <p>Handles boss damage, HUD update and the hurt or death sound.</p>
 </div>
 
 
@@ -1482,7 +1482,7 @@
 
             
 
-            <td class="description last"><p>Endboss.</p></td>
+            <td class="description last"><p>Final boss.</p></td>
         </tr>
 
     
@@ -1567,7 +1567,7 @@
 
 
 <div class="description">
-    <p>Zeichnet einen Frame und plant den naechsten Render-Frame, solange die Welt laeuft.</p>
+    <p>Draws a frame and schedules the next render frame as long as the world is running.</p>
 </div>
 
 
@@ -1655,7 +1655,7 @@
 
 
 <div class="description">
-    <p>Zeichnet Hintergrund, Gegner, Sammelobjekte, Charakter und Wurfobjekte.</p>
+    <p>Draws background, enemies, collectibles, character and thrown objects.</p>
 </div>
 
 
@@ -1743,7 +1743,7 @@
 
 
 <div class="description">
-    <p>Zeichnet Lebensleiste, Flaschen- und Muenzzahl sowie die Bossleiste, wenn der Boss sichtbar ist.</p>
+    <p>Draws the health bar, bottle and coin count and the boss bar when the boss is visible.</p>
 </div>
 
 
@@ -1831,7 +1831,7 @@
 
 
 <div class="description">
-    <p>Plant einmalig die Anzeige des End-Bildschirms nach Ablauf der Todesanimation.</p>
+    <p>Schedules the end screen once after the death animation has finished.</p>
 </div>
 
 
@@ -1883,7 +1883,7 @@
 
             
 
-            <td class="description last"><p>Ob das Spiel gewonnen wurde.</p></td>
+            <td class="description last"><p>Whether the game was won.</p></td>
         </tr>
 
     
@@ -1968,7 +1968,7 @@
 
 
 <div class="description">
-    <p>Spiegelt den Zeichenkontext und die Objektposition horizontal.</p>
+    <p>Mirrors the drawing context and the object position horizontally.</p>
 </div>
 
 
@@ -2020,7 +2020,7 @@
 
             
 
-            <td class="description last"><p>Objekt.</p></td>
+            <td class="description last"><p>Object.</p></td>
         </tr>
 
     
@@ -2105,7 +2105,7 @@
 
 
 <div class="description">
-    <p>Stellt Spiegelung und Objektposition nach dem Zeichnen wieder her.</p>
+    <p>Restores mirroring and object position after drawing.</p>
 </div>
 
 
@@ -2157,7 +2157,7 @@
 
             
 
-            <td class="description last"><p>Objekt.</p></td>
+            <td class="description last"><p>Object.</p></td>
         </tr>
 
     
@@ -2242,7 +2242,7 @@
 
 
 <div class="description">
-    <p>Verarbeitet den Treffer einer Flasche auf einen Gegner.</p>
+    <p>Handles a bottle hitting an enemy.</p>
 </div>
 
 
@@ -2294,7 +2294,7 @@
 
             
 
-            <td class="description last"><p>Flasche.</p></td>
+            <td class="description last"><p>Bottle.</p></td>
         </tr>
 
     
@@ -2317,7 +2317,7 @@
 
             
 
-            <td class="description last"><p>Getroffener Gegner.</p></td>
+            <td class="description last"><p>Enemy that was hit.</p></td>
         </tr>
 
     
@@ -2402,7 +2402,7 @@
 
 
 <div class="description">
-    <p>Prueft, ob der Endboss im aktuellen Kameraausschnitt liegt.</p>
+    <p>Checks whether the final boss is inside the current camera view.</p>
 </div>
 
 
@@ -2475,7 +2475,7 @@
 
         
 <div class="param-desc">
-    <p>Sichtbarkeit des Endbosses.</p>
+    <p>Visibility of the final boss.</p>
 </div>
 
 
@@ -2512,8 +2512,8 @@
 
 
 <div class="description">
-    <p>Prueft, ob der Charakter von oben auf einem Huhn landet. Massgeblich ist die Fussposition
-vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehnern zaehlen.</p>
+    <p>Checks whether the character lands on a chicken from above. The relevant value is the foot position
+before the last gravity step, so fast landings on small chickens count too.</p>
 </div>
 
 
@@ -2565,7 +2565,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Gegner.</p></td>
+            <td class="description last"><p>Enemy.</p></td>
         </tr>
 
     
@@ -2635,7 +2635,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
         
 <div class="param-desc">
-    <p>Ob es ein Treffer von oben ist.</p>
+    <p>Whether it is a hit from above.</p>
 </div>
 
 
@@ -2672,7 +2672,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Setzt einen Gegner auf tot, spielt den Sound und entfernt ihn zeitversetzt.</p>
+    <p>Sets an enemy to dead, plays the sound and removes it with a delay.</p>
 </div>
 
 
@@ -2724,7 +2724,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Gegner.</p></td>
+            <td class="description last"><p>Enemy.</p></td>
         </tr>
 
     
@@ -2809,7 +2809,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Entfernt ein Objekt per Referenz aus einer Liste und beendet seine Timer.</p>
+    <p>Removes an object from a list by reference and stops its timers.</p>
 </div>
 
 
@@ -2861,7 +2861,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Objektliste.</p></td>
+            <td class="description last"><p>List of objects.</p></td>
         </tr>
 
     
@@ -2884,7 +2884,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Zu entfernendes Objekt.</p></td>
+            <td class="description last"><p>Object to remove.</p></td>
         </tr>
 
     
@@ -2969,7 +2969,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Startet die zentrale Kollisions-, Wurf- und Spielstatusschleife.</p>
+    <p>Starts the central collision, throw and game state loop.</p>
 </div>
 
 
@@ -3057,7 +3057,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Stoppt die Welt und zeigt den Sieg- oder Niederlagenbildschirm.</p>
+    <p>Stops the world and shows the win or game over screen.</p>
 </div>
 
 
@@ -3109,7 +3109,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Ob das Spiel gewonnen wurde.</p></td>
+            <td class="description last"><p>Whether the game was won.</p></td>
         </tr>
 
     
@@ -3194,7 +3194,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Besiegt ein Huhn durch einen Sprung und laesst den Charakter abprallen.</p>
+    <p>Defeats a chicken with a jump and lets the character bounce off.</p>
 </div>
 
 
@@ -3246,7 +3246,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
             
 
-            <td class="description last"><p>Huhn.</p></td>
+            <td class="description last"><p>Chicken.</p></td>
         </tr>
 
     
@@ -3331,7 +3331,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Beendet Zeichenschleife und alle Timer dieser Welt endgueltig.</p>
+    <p>Permanently stops the render loop and all timers of this world.</p>
 </div>
 
 
@@ -3419,7 +3419,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 
 
 <div class="description">
-    <p>Aktualisiert die Flaschenzahl im HUD.</p>
+    <p>Updates the bottle count in the HUD.</p>
 </div>
 
 
@@ -3515,7 +3515,7 @@ vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehne
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 16 2026 07:11:10 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 16 2026 20:02:13 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>

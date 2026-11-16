@@ -1,6 +1,6 @@
 import { IntervalHub } from "./interval-hub.class.js";
 
-/** Basisklasse fuer sichtbare Objekte mit Bild- und Animationscache. */
+/** Base class for visible objects with image and animation cache. */
 export class DrawableObject {
     rX; rY; rW; rH;
     x = 100;
@@ -15,8 +15,8 @@ export class DrawableObject {
     ownIntervals = [];
 
     /**
-     * Laedt das aktuelle Einzelbild aus einem Asset-Pfad.
-     * @param {string} path Bildpfad.
+     * Loads the current single image from an asset path.
+     * @param {string} path Image path.
      */
     loadImage(path) {
         this.img = new Image();
@@ -24,8 +24,8 @@ export class DrawableObject {
     }
 
     /**
-     * Laedt mehrere Bilder vor und speichert sie im Cache.
-     * @param {string[]} arr Asset-Pfade.
+     * Preloads multiple images and stores them in the cache.
+     * @param {string[]} arr Asset paths.
      */
     loadImages(arr) {
         arr.forEach(path => {
@@ -36,14 +36,14 @@ export class DrawableObject {
     }
 
     /**
-     * Zeichnet das aktuelle Bild auf den Canvas.
-     * @param {CanvasRenderingContext2D} ctx Zeichenkontext.
+     * Draws the current image on the canvas.
+     * @param {CanvasRenderingContext2D} ctx Drawing context.
      */
     draw(ctx) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
-    /** Berechnet den fuer Kollisionen verwendeten Rahmen unter Beruecksichtigung des Offsets. */
+    /** Calculates the collision frame including the offset. */
     getRealFrame() {
         this.rX = this.x + this.offset.left;
         this.rY = this.y + this.offset.top;
@@ -52,8 +52,8 @@ export class DrawableObject {
     }
 
     /**
-     * Wechselt zyklisch zum naechsten Bild einer Animation.
-     * @param {string[]} images Animationspfade.
+     * Cycles to the next image of an animation.
+     * @param {string[]} images Animation paths.
      */
     playAnimation(images) {
         const path = images[this.currentImage % images.length];
@@ -62,8 +62,8 @@ export class DrawableObject {
     }
 
     /**
-     * Spielt eine Animation einmal ab und bleibt danach auf dem letzten Bild stehen.
-     * @param {string[]} images Animationspfade.
+     * Plays an animation once and then stays on the last image.
+     * @param {string[]} images Animation paths.
      */
     playAnimationOnce(images) {
         if (this.onceImages !== images) {
@@ -76,15 +76,15 @@ export class DrawableObject {
     }
 
     /**
-     * Startet einen Timer, der beim Entfernen des Objekts mit beendet wird.
+     * Starts a timer that is stopped together with the object when it is removed.
      * @param {Function} func Callback.
-     * @param {number} timer Intervall in Millisekunden.
+     * @param {number} timer Interval in milliseconds.
      */
     registerInterval(func, timer) {
         this.ownIntervals.push(IntervalHub.startInterval(func, timer));
     }
 
-    /** Beendet alle eigenen Timer des Objekts. */
+    /** Stops all timers of this object. */
     dispose() {
         this.ownIntervals.forEach(entry => IntervalHub.stopInterval(entry));
         this.ownIntervals = [];

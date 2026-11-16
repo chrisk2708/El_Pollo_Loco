@@ -2,7 +2,7 @@ import { AudioHub } from "./audio-hub.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
-/** Endgegner, der Pepe ab einer bestimmten Distanz verfolgt und angreift. */
+/** Final boss that follows and attacks Pepe from a certain distance. */
 export class Endboss extends MoveableObject {
     height = 450;
     width = 350;
@@ -18,7 +18,7 @@ export class Endboss extends MoveableObject {
         right: 15
     };
 
-    /** Laedt die Bossanimationen und startet die Animationsschleife. */
+    /** Loads the boss animations and starts the animation loop. */
     constructor() {
         super().loadImage(ImageHub.BOSS_CHICKEN.walk[0]);
         Object.values(ImageHub.BOSS_CHICKEN).forEach(images => this.loadImages(images));
@@ -28,8 +28,8 @@ export class Endboss extends MoveableObject {
     }
 
     /**
-     * Richtet den Boss auf Pepe aus und waehlt zwischen Warten, Verfolgen und Angreifen.
-     * @param {Character} character Spielercharakter.
+     * Turns the boss towards Pepe and chooses between waiting, chasing and attacking.
+     * @param {Character} character Player character.
      */
     followCharacter(character) {
         if (this.isDead() || character.isDead()) return;
@@ -45,7 +45,7 @@ export class Endboss extends MoveableObject {
         this.x += character.x < this.x ? -this.speed : this.speed;
     }
 
-    /** Spielt beim ersten Kontakt einmalig den Alarm- und Angriffsschrei. */
+    /** Plays the alert and attack scream once on first contact. */
     playAlertSoundOnce() {
         if (this.hasAlerted) return;
         this.hasAlerted = true;
@@ -53,7 +53,7 @@ export class Endboss extends MoveableObject {
         setTimeout(() => AudioHub.playOne(AudioHub.BOSS_ATTACK), 1200);
     }
 
-    /** Waehlt Todes-, Treffer-, Angriffs-, Lauf- oder Alarmanimation. */
+    /** Chooses the death, hurt, attack, walk or alert animation. */
     updateAnimation() {
         if (this.isDead()) return this.playAnimationOnce(ImageHub.BOSS_CHICKEN.dead);
         if (this.isHurtEndboss()) return this.playAnimation(ImageHub.BOSS_CHICKEN.hurt);

@@ -3,7 +3,7 @@ import { BackgroundObject } from "./background-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { Cloud } from "./cloud.class.js";
 
-/** Beschreibt die Gegner, Sammelobjekte und Hintergrundebenen eines Levels. */
+/** Describes the enemies, collectibles and background layers of a level. */
 export class Level {
     enemies;
     collectibles;
@@ -12,14 +12,14 @@ export class Level {
     levelEndX = 3200;
     step = 960;
 
-    /** Erzeugt ein Level und baut dessen Hintergrund anhand der Abschnittszahl auf. @param {number} sections Anzahl der Hintergrundabschnitte. @param {MoveableObject[]} enemies Gegnerliste. @param {DrawableObject[]} collectibles Sammelobjekte. */
+    /** Creates a level and builds its background based on the number of sections. @param {number} sections Number of background sections. @param {MoveableObject[]} enemies List of enemies. @param {DrawableObject[]} collectibles Collectible objects. */
     constructor(sections, enemies, collectibles) {
         this.addBgLayer(sections);
         this.enemies = enemies;
         this.collectibles = collectibles;
     }
 
-    /** Fuegt pro Abschnitt Luft-, Parallaxen- und Wolkenobjekte hinzu. @param {number} sections Anzahl der Abschnitte. */
+    /** Adds air, parallax and cloud objects for each section. @param {number} sections Number of sections. */
     addBgLayer(sections) {
         for (let i = 0; i < sections; i++) {
             const imgThirdLayer = ImageHub.BACKGROUND.thirdLayer[i % 2];

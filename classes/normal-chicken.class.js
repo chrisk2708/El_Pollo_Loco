@@ -1,7 +1,7 @@
 import { ImageHub } from "./img-hub.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
-/** Standardgegner, der zwischen Levelanfang und Levelende hin und her laeuft. */
+/** Standard enemy that walks back and forth between level start and level end. */
 export class Chicken extends MoveableObject {
     y = 370;
     height = 50;
@@ -18,8 +18,8 @@ export class Chicken extends MoveableObject {
     };
 
     /**
-     * Erzeugt einen Gegner mit zufaelliger Startposition ausserhalb des Startbildschirms.
-     * @param {{walk: string[], dead: string[]}} images Animationsbilder des Huhns.
+     * Creates an enemy with a random start position outside the start screen.
+     * @param {{walk: string[], dead: string[]}} images Animation images of the chicken.
      */
     constructor(images = ImageHub.NORMAL_CHICKEN) {
         super().loadImage(images.walk[0]);
@@ -31,13 +31,13 @@ export class Chicken extends MoveableObject {
         this.animate();
     }
 
-    /** Registriert Bewegung und zustandsabhaengige Animation. */
+    /** Registers movement and state dependent animation. */
     animate() {
         this.registerInterval(() => this.patrol(), 1000 / 60);
         this.registerInterval(() => this.updateAnimation(), 150);
     }
 
-    /** Bewegt das Huhn und dreht an den Levelgrenzen um. */
+    /** Moves the chicken and turns around at the level bounds. */
     patrol() {
         if (this.isDead()) return;
         if (this.x <= this.minX) this.otherDirection = true;
@@ -46,7 +46,7 @@ export class Chicken extends MoveableObject {
         else this.moveLeft();
     }
 
-    /** Zeigt Lauf- oder Todesbild passend zum Zustand. */
+    /** Shows the walk or death image according to the state. */
     updateAnimation() {
         if (this.isDead()) this.playAnimation(this.images.dead);
         else this.playAnimation(this.images.walk);

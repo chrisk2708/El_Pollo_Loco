@@ -4,7 +4,7 @@ import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { MoveableObject } from "./moveable-object.class.js";
 
-/** Steuerbarer Spielercharakter mit Bewegung, Animation, Kamera und Sounds. */
+/** Playable character with movement, animation, camera and sounds. */
 export class Character extends MoveableObject {
     y = 130;
     height = 300;
@@ -26,7 +26,7 @@ export class Character extends MoveableObject {
         right: 20
     };
 
-    /** Laedt alle Charakteranimationen und startet Gravitation sowie Spielschleifen. */
+    /** Loads all character animations and starts gravity and game loops. */
     constructor() {
         super().loadImage(ImageHub.PEPE.idle[0]);
         Object.values(ImageHub.PEPE).forEach(images => this.loadImages(images));
@@ -35,7 +35,7 @@ export class Character extends MoveableObject {
         this.animate();
     }
 
-    /** Registriert die unabhaengigen Bewegungs-, Animations- und Sound-Timer. */
+    /** Registers the independent movement, animation and sound timers. */
     animate() {
         IntervalHub.startInterval(() => this.updateMovement(), 1000 / 60);
         IntervalHub.startInterval(() => this.updateAnimation(), 150);
@@ -44,7 +44,7 @@ export class Character extends MoveableObject {
         IntervalHub.startInterval(() => this.playSnoreSound(), 3500);
     }
 
-    /** Verarbeitet Eingaben und positioniert die Kamera relativ zum Charakter. */
+    /** Processes input and positions the camera relative to the character. */
     updateMovement() {
         if (!this.isDead()) {
             this.handleHorizontalMovement();
@@ -55,7 +55,7 @@ export class Character extends MoveableObject {
         this.updateCamera();
     }
 
-    /** Laesst den Charakter beim Tod einmal nach oben springen; danach faellt er durch den Boden. */
+    /** Lets the character jump up once on death; afterwards it falls through the ground. */
     startDeathJump() {
         if (this.hasDeathJumped) return;
         this.hasDeathJumped = true;
@@ -63,21 +63,21 @@ export class Character extends MoveableObject {
     }
 
     /**
-     * Ein toter Charakter gilt immer als in der Luft, damit die Gravitation ihn aus dem Bild fallen laesst.
-     * @returns {boolean} Ob der Charakter in der Luft ist.
+     * A dead character always counts as airborne so gravity lets it fall out of the screen.
+     * @returns {boolean} Whether the character is in the air.
      */
     isAboveGround() {
         return this.isDead() || super.isAboveGround();
     }
 
-    /** Laesst die Kamera dem Charakter folgen, ohne ueber die Levelgrenzen hinauszuscrollen. */
+    /** Lets the camera follow the character without scrolling past the level bounds. */
     updateCamera() {
         const maxScroll = this.world.level.levelEndX + this.width + 40 - this.world.canvas.width;
         const target = Math.min(Math.max(this.x - 120, 0), maxScroll);
         this.cameraX = -target;
     }
 
-    /** Bewegt den Charakter anhand der linken und rechten Eingabe. */
+    /** Moves the character based on left and right input. */
     handleHorizontalMovement() {
         if (Keyboard.RIGHT && this.x < this.world.level.levelEndX) {
             this.moveRight();
@@ -89,7 +89,7 @@ export class Character extends MoveableObject {
         }
     }
 
-    /** Loest einen Sprung aus und steuert die Sprungton-Wiederholung. */
+    /** Triggers a jump and controls the jump sound repetition. */
     handleJump() {
         if (Keyboard.SPACE && !this.isAboveGround()) {
             this.speedY = 30;
@@ -98,14 +98,14 @@ export class Character extends MoveableObject {
         if (!this.isAboveGround()) this.isJumpSoundPlayed = false;
     }
 
-    /** Spielt den Sprungton hoechstens einmal pro Sprung ab. */
+    /** Plays the jump sound at most once per jump. */
     playJumpSound() {
         if (this.isJumpSoundPlayed) return;
         this.isJumpSoundPlayed = true;
         AudioHub.playOne(AudioHub.JUMP_SOUND);
     }
 
-    /** Waehlt die Animation anhand von Tod, Schaden, Sprung, Bewegung oder Idle-Zeit. */
+    /** Chooses the animation based on death, damage, jump, movement or idle time. */
     updateAnimation() {
         if (this.isDead()) return this.playAnimationOnce(ImageHub.PEPE.dead);
         if (this.isHurt()) return this.setAnimation(ImageHub.PEPE.hurt);
@@ -115,8 +115,8 @@ export class Character extends MoveableObject {
     }
 
     /**
-     * Setzt eine Animation und beendet den bisherigen Idle-Zeitabschnitt.
-     * @param {string[]} images Animationspfade.
+     * Sets an animation and ends the current idle period.
+     * @param {string[]} images Animation paths.
      */
     setAnimation(images) {
         this.idleTimeStamp = Date.now();
@@ -126,8 +126,8 @@ export class Character extends MoveableObject {
     }
 
     /**
-     * Waehlt kurze oder lange Idle-Animation.
-     * @param {number} timePassed Sekunden seit letzter Aktivitaet.
+     * Chooses the short or long idle animation.
+     * @param {number} timePassed Seconds since the last activity.
      */
     setIdleAnimation(timePassed) {
         this.isLongIdle = timePassed > 10;
@@ -135,7 +135,7 @@ export class Character extends MoveableObject {
         this.playAnimation(images);
     }
 
-    /** Startet oder beendet den Lauf-Sound passend zum Bewegungszustand. */
+    /** Starts or stops the walking sound according to the movement state. */
     updateWalkSound() {
         const isBusy = this.isAboveGround() || this.isDead() || this.isHurt();
         const isWalking = Keyboard.RIGHT || Keyboard.LEFT;
@@ -144,21 +144,21 @@ export class Character extends MoveableObject {
         this.stopWalkSound();
     }
 
-    /** Startet den geloopten Lauf-Sound, sofern Audio aktiv ist. */
+    /** Starts the looped walking sound if audio is enabled. */
     startWalkSound() {
         if (this.isWalkingPlaying || AudioHub.isMuted) return;
         this.isWalkingPlaying = true;
         AudioHub.playOne(AudioHub.WALK_SOUND);
     }
 
-    /** Pausiert den Lauf-Sound und setzt dessen Status zurueck. */
+    /** Pauses the walking sound and resets its state. */
     stopWalkSound() {
         if (!this.isWalkingPlaying) return;
         this.isWalkingPlaying = false;
         AudioHub.stopOne(AudioHub.WALK_SOUND);
     }
 
-    /** Spielt den Todessound einmal ab und beendet den Lauf-Sound. */
+    /** Plays the death sound once and stops the walking sound. */
     updateDeathSound() {
         if (!this.isDead() || this.hasPlayedDeathSound) return;
         this.hasPlayedDeathSound = true;
@@ -166,7 +166,7 @@ export class Character extends MoveableObject {
         this.stopWalkSound();
     }
 
-    /** Spielt bei langem, bodengebundenem Idle den Schnarchsound ab. */
+    /** Plays the snoring sound during long idle time on the ground. */
     playSnoreSound() {
         const canSnore = this.isLongIdle && !Keyboard.RIGHT && !Keyboard.LEFT
             && !this.isAboveGround() && !this.isDead() && !this.isHurt();
@@ -174,7 +174,7 @@ export class Character extends MoveableObject {
         else this.stopSnoreSound();
     }
 
-    /** Beendet einen laufenden Schnarchsound, sobald Pepe nicht mehr idle ist. */
+    /** Stops a running snoring sound as soon as Pepe is no longer idle. */
     stopSnoreSound() {
         AudioHub.stopOne(AudioHub.SNOR_SOUND);
     }

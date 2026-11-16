@@ -17,9 +17,9 @@ const touchButtons = {
 };
 
 /**
- * Setzt den Zustand einer Taste, sofern sie zur Spielsteuerung gehoert.
- * @param {KeyboardEvent} event Tastaturereignis.
- * @param {boolean} pressed Ob die Taste gedrueckt ist.
+ * Sets the state of a key if it belongs to the game controls.
+ * @param {KeyboardEvent} event Keyboard event.
+ * @param {boolean} pressed Whether the key is pressed.
  */
 function setKey(event, pressed) {
     const key = keyMap[event.code];
@@ -29,16 +29,16 @@ function setKey(event, pressed) {
 }
 
 
-/** Setzt alle Steuerungsflags zurueck, z. B. beim Pausieren. */
+/** Resets all control flags, e.g. when pausing. */
 export function releaseAllKeys() {
     Object.values(keyMap).forEach(key => Keyboard[key] = false);
 }
 
 
 /**
- * Verbindet einen Touch-Button mit einem Steuerungsflag.
- * @param {string} id ID des Buttons.
- * @param {string} key Name des Flags in Keyboard.
+ * Connects a touch button to a control flag.
+ * @param {string} id Button ID.
+ * @param {string} key Name of the flag in Keyboard.
  */
 function bindTouchButton(id, key) {
     const button = document.getElementById(id);
@@ -52,7 +52,7 @@ function bindTouchButton(id, key) {
 }
 
 
-/** Registriert Tastatur- und Touch-Steuerung und sperrt das Kontextmenue der Touch-Buttons. */
+/** Registers keyboard and touch controls and blocks the context menu of the touch buttons. */
 export function initControls() {
     window.addEventListener('keydown', (event) => setKey(event, true));
     window.addEventListener('keyup', (event) => setKey(event, false));

@@ -1,7 +1,7 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
 
-/** Sammelbare Salsa-Flasche mit Bodenanimation. */
+/** Collectible salsa bottle with ground animation. */
 export class SalsaBottle extends DrawableObject {
 
     offset = {
@@ -13,7 +13,7 @@ export class SalsaBottle extends DrawableObject {
 
     IMAGES = ImageHub.BOTTLE.onGround;
 
-    /** Erzeugt eine Flasche an den angegebenen Weltkoordinaten. @param {number} x Horizontale Position. @param {number} y Vertikale Position. */
+    /** Creates a bottle at the given world coordinates. @param {number} x Horizontal position. @param {number} y Vertical position. */
     constructor(x, y) {
         super().loadImage(ImageHub.BOTTLE.onGround[0]);
         this.loadImages(this.IMAGES);
@@ -25,7 +25,7 @@ export class SalsaBottle extends DrawableObject {
         this.animate();
     }
 
-    /** Registriert die zyklische Bodenanimation der Flasche. */
+    /** Registers the cyclic ground animation of the bottle. */
     animate() {
         this.registerInterval(() => {
             this.playAnimation(this.IMAGES);

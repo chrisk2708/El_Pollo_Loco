@@ -12,7 +12,7 @@ import { AudioHub } from "./audio-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { ImageHub } from "./img-hub.class.js";
 
-/** Zentrale Spielwelt fuer Rendering, Kollisionen, Sammelobjekte und Spielende. */
+/** Central game world for rendering, collisions, collectibles and game end. */
 export class World {
     ctx;
     canvas;
@@ -31,8 +31,8 @@ export class World {
     frameId = null;
 
     /**
-     * Initialisiert Canvas, Level, Charakterbindung, Spielschleife und Hintergrundmusik.
-     * @param {HTMLCanvasElement} canvas Ziel-Canvas.
+     * Initializes canvas, level, character binding, game loop and background music.
+     * @param {HTMLCanvasElement} canvas Target canvas.
      */
     constructor(canvas) {
         this.ctx = canvas.getContext('2d');
@@ -44,7 +44,7 @@ export class World {
         AudioHub.playOne(AudioHub.GAME_SOUND);
     }
 
-    /** Zeichnet einen Frame und plant den naechsten Render-Frame, solange die Welt laeuft. */
+    /** Draws a frame and schedules the next render frame as long as the world is running. */
     draw() {
         if (this.isStopped) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -55,7 +55,7 @@ export class World {
         this.frameId = requestAnimationFrame(() => this.draw());
     }
 
-    /** Zeichnet Hintergrund, Gegner, Sammelobjekte, Charakter und Wurfobjekte. */
+    /** Draws background, enemies, collectibles, character and thrown objects. */
     drawLevelObjects() {
         [this.level.backgroundObjects, this.level.clouds, this.level.enemies,
             this.level.collectibles].forEach(objects => this.addObjectsToMap(objects));
@@ -63,7 +63,7 @@ export class World {
         this.addObjectsToMap(this.throwableObjects);
     }
 
-    /** Zeichnet Lebensleiste, Flaschen- und Muenzzahl sowie die Bossleiste, wenn der Boss sichtbar ist. */
+    /** Draws the health bar, bottle and coin count and the boss bar when the boss is visible. */
     drawStatusBars() {
         const statusbars = [this.statusbarHealth, this.bottleCounter, this.coinCounter];
         if (this.isEndbossVisible()) statusbars.push(this.statusbarEndboss);
@@ -71,8 +71,8 @@ export class World {
     }
 
     /**
-     * Prueft, ob der Endboss im aktuellen Kameraausschnitt liegt.
-     * @returns {boolean} Sichtbarkeit des Endbosses.
+     * Checks whether the final boss is inside the current camera view.
+     * @returns {boolean} Visibility of the final boss.
      */
     isEndbossVisible() {
         const cameraX = this.character.cameraX;
@@ -82,16 +82,16 @@ export class World {
     }
 
     /**
-     * Zeichnet eine Objektliste einzeln auf die Weltkarte.
-     * @param {DrawableObject[]} objects Zu zeichnende Objekte.
+     * Draws a list of objects one by one onto the world map.
+     * @param {DrawableObject[]} objects Objects to draw.
      */
     addObjectsToMap(objects) {
         objects.forEach(object => this.addToMap(object));
     }
 
     /**
-     * Zeichnet ein Objekt, aktualisiert seinen Kollisionsrahmen und spiegelt es bei Bedarf.
-     * @param {DrawableObject} mo Objekt.
+     * Draws an object, updates its collision frame and mirrors it if needed.
+     * @param {DrawableObject} mo Object.
      */
     addToMap(mo) {
         mo.getRealFrame();
@@ -101,8 +101,8 @@ export class World {
     }
 
     /**
-     * Spiegelt den Zeichenkontext und die Objektposition horizontal.
-     * @param {DrawableObject} mo Objekt.
+     * Mirrors the drawing context and the object position horizontally.
+     * @param {DrawableObject} mo Object.
      */
     flipImage(mo) {
         this.ctx.save();
@@ -112,15 +112,15 @@ export class World {
     }
 
     /**
-     * Stellt Spiegelung und Objektposition nach dem Zeichnen wieder her.
-     * @param {DrawableObject} mo Objekt.
+     * Restores mirroring and object position after drawing.
+     * @param {DrawableObject} mo Object.
      */
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
-    /** Startet die zentrale Kollisions-, Wurf- und Spielstatusschleife. */
+    /** Starts the central collision, throw and game state loop. */
     run() {
         IntervalHub.startInterval(() => {
             this.checkEnemyCollisions();
@@ -131,7 +131,7 @@ export class World {
         }, 1000 / 60);
     }
 
-    /** Steuert den Endboss und prueft alle Gegner auf Kollision mit dem Charakter. */
+    /** Controls the final boss and checks all enemies for collision with the character. */
     checkEnemyCollisions() {
         this.level.enemies.forEach(enemy => {
             if (enemy instanceof Endboss) enemy.followCharacter(this.character);
@@ -143,10 +143,10 @@ export class World {
     }
 
     /**
-     * Prueft, ob der Charakter von oben auf einem Huhn landet. Massgeblich ist die Fussposition
-     * vor dem letzten Gravitationsschritt, damit schnelle Landungen auf kleinen Huehnern zaehlen.
-     * @param {MoveableObject} enemy Gegner.
-     * @returns {boolean} Ob es ein Treffer von oben ist.
+     * Checks whether the character lands on a chicken from above. The relevant value is the foot position
+     * before the last gravity step, so fast landings on small chickens count too.
+     * @param {MoveableObject} enemy Enemy.
+     * @returns {boolean} Whether it is a hit from above.
      */
     isJumpOnEnemy(enemy) {
         if (enemy instanceof Endboss || !this.character.movedDown()) return false;
@@ -154,8 +154,8 @@ export class World {
     }
 
     /**
-     * Besiegt ein Huhn durch einen Sprung und laesst den Charakter abprallen.
-     * @param {MoveableObject} enemy Huhn.
+     * Defeats a chicken with a jump and lets the character bounce off.
+     * @param {MoveableObject} enemy Chicken.
      */
     stompEnemy(enemy) {
         this.character.speedY = 15;
@@ -163,8 +163,8 @@ export class World {
     }
 
     /**
-     * Setzt einen Gegner auf tot, spielt den Sound und entfernt ihn zeitversetzt.
-     * @param {MoveableObject} enemy Gegner.
+     * Sets an enemy to dead, plays the sound and removes it with a delay.
+     * @param {MoveableObject} enemy Enemy.
      */
     killEnemy(enemy) {
         enemy.energy = 0;
@@ -173,8 +173,8 @@ export class World {
     }
 
     /**
-     * Zieht dem Charakter je nach Gegnertyp Energie ab, sofern er nicht unverwundbar ist.
-     * @param {MoveableObject} enemy Angreifer.
+     * Reduces the character's energy depending on the enemy type unless it is invulnerable.
+     * @param {MoveableObject} enemy Attacker.
      */
     damageCharacter(enemy) {
         if (this.character.isHurt()) return;
@@ -186,9 +186,9 @@ export class World {
     }
 
     /**
-     * Entfernt ein Objekt per Referenz aus einer Liste und beendet seine Timer.
-     * @param {Array} list Objektliste.
-     * @param {DrawableObject} object Zu entfernendes Objekt.
+     * Removes an object from a list by reference and stops its timers.
+     * @param {Array} list List of objects.
+     * @param {DrawableObject} object Object to remove.
      */
     removeFrom(list, object) {
         const index = list.indexOf(object);
@@ -196,7 +196,7 @@ export class World {
         if (object.dispose) object.dispose();
     }
 
-    /** Sucht kollidierte Sammelobjekte und verarbeitet sie. */
+    /** Finds collided collectibles and processes them. */
     checkCollisionCollectible() {
         this.level.collectibles
             .filter(item => this.character.isColliding(item))
@@ -204,8 +204,8 @@ export class World {
     }
 
     /**
-     * Entfernt das eingesammelte Objekt und zaehlt es als Muenze oder Flasche.
-     * @param {DrawableObject} item Sammelobjekt.
+     * Removes the collected object and counts it as a coin or bottle.
+     * @param {DrawableObject} item Collectible object.
      */
     collectItem(item) {
         this.removeFrom(this.level.collectibles, item);
@@ -213,26 +213,26 @@ export class World {
         else if (item instanceof SalsaBottle) this.collectBottle();
     }
 
-    /** Erhoeht die Muenzzahl, aktualisiert die Anzeige und spielt den Sound. */
+    /** Increases the coin count, updates the display and plays the sound. */
     collectCoin() {
         this.coins++;
         this.coinCounter.setValue(this.coins);
         AudioHub.playOne(AudioHub.COIN_SOUND);
     }
 
-    /** Erhoeht die Flaschenzahl, aktualisiert die Anzeige und spielt den Sound. */
+    /** Increases the bottle count, updates the display and plays the sound. */
     collectBottle() {
         this.bottles++;
         this.updateBottleBar();
         AudioHub.playOne(AudioHub.BOTL_PICK);
     }
 
-    /** Aktualisiert die Flaschenzahl im HUD. */
+    /** Updates the bottle count in the HUD. */
     updateBottleBar() {
         this.bottleCounter.setValue(this.bottles);
     }
 
-    /** Erzeugt bei Eingabe eine Wurf-Flasche, sofern Vorrat und Abklingzeit es erlauben. */
+    /** Creates a thrown bottle on input if supply and cooldown allow it. */
     checkBottleThrow() {
         const canThrow = Date.now() - this.lastThrowTime > 1000;
         if (!Keyboard.B || !canThrow || this.bottles <= 0 || this.character.isDead()) return;
@@ -245,7 +245,7 @@ export class World {
         pepe.idleTimeStamp = Date.now();
     }
 
-    /** Prueft fliegende Flaschen auf Gegnertreffer und Bodenkontakt. */
+    /** Checks flying bottles for enemy hits and ground contact. */
     checkBottles() {
         this.throwableObjects.filter(bottle => !bottle.isBroken).forEach(bottle => {
             const enemy = this.level.enemies.find(e => !e.isDead() && bottle.isColliding(e));
@@ -255,9 +255,9 @@ export class World {
     }
 
     /**
-     * Verarbeitet den Treffer einer Flasche auf einen Gegner.
-     * @param {ThrowableObject} bottle Flasche.
-     * @param {MoveableObject} enemy Getroffener Gegner.
+     * Handles a bottle hitting an enemy.
+     * @param {ThrowableObject} bottle Bottle.
+     * @param {MoveableObject} enemy Enemy that was hit.
      */
     hitEnemyWithBottle(bottle, enemy) {
         this.breakBottle(bottle);
@@ -266,8 +266,8 @@ export class World {
     }
 
     /**
-     * Laesst eine Flasche zerplatzen und entfernt sie nach der Spritzanimation.
-     * @param {ThrowableObject} bottle Flasche.
+     * Lets a bottle burst and removes it after the splash animation.
+     * @param {ThrowableObject} bottle Bottle.
      */
     breakBottle(bottle) {
         bottle.break();
@@ -276,8 +276,8 @@ export class World {
     }
 
     /**
-     * Verarbeitet Boss-Schaden, HUD-Aktualisierung sowie Treffer- oder Todessound.
-     * @param {Endboss} boss Endboss.
+     * Handles boss damage, HUD update and the hurt or death sound.
+     * @param {Endboss} boss Final boss.
      */
     damageEndboss(boss) {
         boss.energy = Math.max(0, boss.energy - 20);
@@ -289,8 +289,8 @@ export class World {
     }
 
     /**
-     * Plant einmalig die Anzeige des End-Bildschirms nach Ablauf der Todesanimation.
-     * @param {boolean} won Ob das Spiel gewonnen wurde.
+     * Schedules the end screen once after the death animation has finished.
+     * @param {boolean} won Whether the game was won.
      */
     finishGame(won) {
         if (this.isFinished) return;
@@ -299,8 +299,8 @@ export class World {
     }
 
     /**
-     * Stoppt die Welt und zeigt den Sieg- oder Niederlagenbildschirm.
-     * @param {boolean} won Ob das Spiel gewonnen wurde.
+     * Stops the world and shows the win or game over screen.
+     * @param {boolean} won Whether the game was won.
      */
     showEndScreen(won) {
         if (this.isStopped) return;
@@ -314,7 +314,7 @@ export class World {
         window.dispatchEvent(new CustomEvent('gameended'));
     }
 
-    /** Beendet Zeichenschleife und alle Timer dieser Welt endgueltig. */
+    /** Permanently stops the render loop and all timers of this world. */
     stop() {
         this.isStopped = true;
         cancelAnimationFrame(this.frameId);

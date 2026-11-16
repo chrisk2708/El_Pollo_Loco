@@ -1,6 +1,6 @@
-/** Statische, unveraenderliche Asset-Konfiguration fuer alle Spielbilder. */
+/** Static, immutable asset configuration for all game images. */
 export class ImageHub {
-	/** Animationsgruppen fuer Pepe: Idle, Laufen, Springen, Schaden und Tod. */
+	/** Animation groups for Pepe: idle, walk, jump, hurt and death. */
 	static PEPE = {
 		idle: [
 			"./assets/img/2_character_pepe/1_idle/idle/I-1.png",
@@ -60,7 +60,7 @@ export class ImageHub {
 		],
 	};
 
-	/** Animationsgruppen fuer das normale Huhn. */
+	/** Animation groups for the normal chicken. */
 	static NORMAL_CHICKEN = {
 		walk: [
 			"./assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -70,7 +70,7 @@ export class ImageHub {
 		dead: ["./assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png"],
 	};
 
-	/** Animationsgruppen fuer das kleine Huhn. */
+	/** Animation groups for the small chicken. */
 	static SMALL_CHICKEN = {
 		walk: [
 			"./assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
@@ -80,7 +80,7 @@ export class ImageHub {
 		dead: ["./assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png"],
 	};
 
-	/** Animationsgruppen fuer den Endboss. */
+	/** Animation groups for the final boss. */
 	static BOSS_CHICKEN = {
 		walk: [
 			"./assets/img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -120,7 +120,7 @@ export class ImageHub {
 		],
 	};
 
-	/** Parallax- und Wolkenbilder fuer den Levelhintergrund. */
+	/** Parallax and cloud images for the level background. */
 	static BACKGROUND = {
 		firstLayer: ["./assets/img/5_background/layers/1_first_layer/1.png", "./assets/img/5_background/layers/1_first_layer/2.png"],
 		secondLayer: ["./assets/img/5_background/layers/2_second_layer/1.png", "./assets/img/5_background/layers/2_second_layer/2.png"],
@@ -129,7 +129,7 @@ export class ImageHub {
 		air: ["./assets/img/5_background/layers/air.png"],
 	};
 
-	/** Bilder fuer Rotation, Aufprall und Bodenflaschen. */
+	/** Images for rotation, splash and ground bottles. */
 	static BOTTLE = {
 		rotation: [
 			"./assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
@@ -148,7 +148,7 @@ export class ImageHub {
 		onGround: ["./assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png", "./assets/img/6_salsa_bottle/2_salsa_bottle_on_ground.png"],
 	};
 
-	/** Statusleisten, Symbole und Rahmenbilder fuer HUD-Anzeigen. */
+	/** Status bars, icons and frame images for HUD displays. */
 	static STATUSBAR = {
 		health: [
 			"./assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png",
@@ -194,7 +194,7 @@ export class ImageHub {
 		}
 	};
 
-	/** Animationsbilder fuer Sammelmuenzen. */
+	/** Animation images for collectible coins. */
 	static COIN = { 
 		coin: [
 			"./assets/img/8_coin/coin_1.png",
@@ -202,7 +202,7 @@ export class ImageHub {
 		]
 	};
 
-	/** Start-, Sieg- und Niederlagenbildschirme. */
+	/** Start, win and game over screens. */
 	static INTRO_OUTRO_SCREENS = {
 		start: ["./assets/img/9_intro_outro_screens/start/startscreen_1.png"],
 		won: [

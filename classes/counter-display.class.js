@@ -1,15 +1,15 @@
 import { DrawableObject } from "./drawable-object.class.js";
 
-/** HUD-Anzeige aus einem Symbol und einer Zahl, z. B. fuer Muenzen oder Flaschen. */
+/** HUD display made of an icon and a number, e.g. for coins or bottles. */
 export class CounterDisplay extends DrawableObject {
     value = 0;
 
     /**
-     * Erzeugt eine Zaehleranzeige.
+     * Creates a counter display.
      * @param {{path: string, crop: {sx: number, sy: number, sw: number, sh: number}, width: number, height: number}} icon
-     *     Symbolbild, sichtbarer Bildausschnitt ohne transparenten Rand und Anzeigegroesse.
-     * @param {number} x Horizontale Position.
-     * @param {number} y Vertikale Position.
+     *     Icon image, visible image section without transparent border and display size.
+     * @param {number} x Horizontal position.
+     * @param {number} y Vertical position.
      */
     constructor(icon, x, y) {
         super().loadImage(icon.path);
@@ -21,16 +21,16 @@ export class CounterDisplay extends DrawableObject {
     }
 
     /**
-     * Setzt den angezeigten Wert.
-     * @param {number} value Neuer Wert.
+     * Sets the displayed value.
+     * @param {number} value New value.
      */
     setValue(value) {
         this.value = value;
     }
 
     /**
-     * Zeichnet den Bildausschnitt des Symbols und daneben die Zahl.
-     * @param {CanvasRenderingContext2D} ctx Zeichenkontext.
+     * Draws the image section of the icon and the number next to it.
+     * @param {CanvasRenderingContext2D} ctx Drawing context.
      */
     draw(ctx) {
         const { sx, sy, sw, sh } = this.crop;
@@ -39,8 +39,8 @@ export class CounterDisplay extends DrawableObject {
     }
 
     /**
-     * Zeichnet die Zahl mit dunkler Kontur fuer gute Lesbarkeit.
-     * @param {CanvasRenderingContext2D} ctx Zeichenkontext.
+     * Draws the number with a dark outline for better readability.
+     * @param {CanvasRenderingContext2D} ctx Drawing context.
      */
     drawValue(ctx) {
         ctx.save();
