@@ -282,7 +282,9 @@ button:hover {
 }
 
 #controlDescription img.touch-icon {
-    background-color: rgb(245, 245, 245);
+    padding: 10px;
+    background-color: rgb(20, 24, 25);
+    border: 2px solid white;
     border-radius: 50%;
 }
 
@@ -372,7 +374,7 @@ button:hover {
     height: 48px;
     width: 48px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(20, 24, 25, 0.7);
 }
 
 #footer {
@@ -583,13 +585,19 @@ button:hover {
         width: clamp(48px, 8dvh, 64px);
         height: clamp(48px, 8dvh, 64px);
         margin: 0;
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        background-color: rgba(20, 24, 25, 0.55);
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        background-color: rgba(20, 24, 25, 0.7);
     }
 
     .mobileButtons img {
-        width: 60%;
-        height: 60%;
+        width: 72%;
+        height: 72%;
+    }
+
+    #throwButton img {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 0 1px white) drop-shadow(0 0 1px white);
     }
 
     #optModal {
@@ -617,7 +625,7 @@ button:hover {
     }
 
     .control-keys {
-        width: min(400px, 100%);
+        width: min(400px, calc(100% - 88px));
     }
 
     .control-keys h2 {
@@ -702,4 +710,18 @@ html:has(.imprint-page),
 html:has(.imprint-page)::-webkit-scrollbar,
 .imprint-page::-webkit-scrollbar {
     display: none;
+}
+
+/* Spielerklaerung: Text beginnt unterhalb des Schliessen-X */
+#gameDescription {
+    padding-top: 44px;
+}
+
+#gameDescription p {
+    font-size: 16px;
+}
+
+/* Optionsmenue: alle Menue-Buttons gleich breit */
+#optModal > button:not(.close-x) {
+    width: min(240px, 100%);
 }

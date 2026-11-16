@@ -102,6 +102,7 @@ function goHome() {
 function setStartButtonsVisible(visible) {
     setVisible('startBtn', visible);
     setVisible('optBtnStart', visible);
+    setVisible('fullscreenBtnStart', visible);
 }
 
 
