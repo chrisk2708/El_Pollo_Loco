@@ -229,6 +229,47 @@ function updateControlIcons() {
 }
 
 
+/**
+ * Prueft, ob der Vollbildmodus aktiv ist (nativ oder als CSS-Ersatz).
+ * @returns {boolean} Vollbildstatus.
+ */
+function isFullscreen() {
+    return document.body.classList.contains('fullscreen');
+}
+
+
+/**
+ * Schaltet die Vollbild-Darstellung um und passt Buttons an.
+ * @param {boolean} active Gewuenschter Status.
+ */
+function setFullscreenClass(active) {
+    document.body.classList.toggle('fullscreen', active);
+    const icon = active ? 'fullscreen_exit.svg' : 'fullscreen.svg';
+    $('fullscreenBtn').querySelector('img').src = `./assets/img/icons/${icon}`;
+    $('fullscreenBtn').setAttribute('aria-label', active ? 'Vollbild beenden' : 'Vollbild');
+    $('fullscreenBtnStart').textContent = active ? 'Vollbild beenden' : 'Vollbild';
+}
+
+
+/**
+ * Startet oder beendet den Vollbildmodus. Ohne Fullscreen-API (z. B. iPhone)
+ * wird nur die CSS-Darstellung umgeschaltet.
+ */
+function toggleFullscreen() {
+    const root = document.documentElement;
+    if (document.fullscreenElement) return document.exitFullscreen().catch(() => setFullscreenClass(false));
+    if (isFullscreen()) return setFullscreenClass(false);
+    if (!document.fullscreenEnabled || !root.requestFullscreen) return setFullscreenClass(true);
+    root.requestFullscreen().catch(() => setFullscreenClass(true));
+}
+
+
+/** Gleicht die CSS-Klasse an, wenn der Browser das Vollbild selbst beendet (z. B. per Esc). */
+function syncFullscreenState() {
+    setFullscreenClass(Boolean(document.fullscreenElement));
+}
+
+
 /** Blendet nach Spielende die Touch-Steuerung aus; Menue- und Ton-Button bleiben sichtbar. */
 function handleGameEnded() {
     setMobileControls(false);
@@ -245,6 +286,7 @@ function bindMenuButtons() {
     $('audioBtn').addEventListener('click', toggleMute);
     $('optBtnStart').addEventListener('click', () => openOptions('start'));
     $('optBtnOverlay').addEventListener('click', openGameOptions);
+    document.querySelectorAll('[data-fullscreen-toggle]').forEach(btn => btn.addEventListener('click', toggleFullscreen));
     bindDialogButtons();
 }
 
@@ -270,6 +312,7 @@ function initPage() {
     window.addEventListener('gameended', handleGameEnded);
     window.addEventListener('resize', syncGameOrientation);
     window.addEventListener('orientationchange', syncGameOrientation);
+    document.addEventListener('fullscreenchange', syncFullscreenState);
 }
 
 initPage();

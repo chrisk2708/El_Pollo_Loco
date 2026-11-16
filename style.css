@@ -8,7 +8,7 @@ body {
     width: 100%;
     padding: clamp(8px, 2vw, 24px);
     overflow: hidden;
-    background-image: url('./assets/img/5_background/bg2.png');
+    background-image: url('./assets/img/5_background/EPL_bg.webp');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -163,7 +163,8 @@ button:hover {
 }
 
 #optBtnOverlay img,
-#audioBtn img {
+#audioBtn img,
+#fullscreenBtn img {
     background-color: rgba(0, 0, 0, 0.4);
     padding: 10px;
     border-radius: 50%;
@@ -530,15 +531,10 @@ button:hover {
     }
 
     .main-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: min(100vw, 200dvh);
-        height: min(50vw, 100dvh);
+        width: min(100vw, calc((100dvh - 44px) * 2));
         max-width: none;
         max-height: none;
         aspect-ratio: 2 / 1;
-        transform: translate(-50%, -50%);
     }
 
     #canvas {
@@ -547,7 +543,18 @@ button:hover {
     }
 
     #footer {
-        display: none;
+        height: 36px;
+        margin-top: 8px;
+        gap: 12px;
+        font-size: 0.8rem;
+    }
+
+    #footer > div:last-child {
+        gap: 12px;
+    }
+
+    #footer a {
+        padding: 4px 8px;
     }
 
     .ingame-options {
@@ -626,4 +633,24 @@ button:hover {
         font-size: clamp(12px, 2.8dvh, 16px);
         padding: 4px;
     }
+}
+
+/* Vollbildmodus: Footer ausblenden, Spielflaeche maximal gross */
+body.fullscreen {
+    padding: 0;
+}
+
+body.fullscreen #footer {
+    display: none !important;
+}
+
+body.fullscreen .main-content {
+    width: min(100vw, 200dvh);
+    max-width: none;
+    max-height: none;
+}
+
+body.fullscreen #canvas {
+    border: 0;
+    border-radius: 0;
 }
