@@ -130,6 +130,7 @@ function goHome() {
 function setStartButtonsVisible(visible) {
     setVisible('startBtn', visible);
     setVisible('optBtnStart', visible);
+    setVisible('fullscreenBtnStart', visible);
 }
 
 
@@ -151,15 +152,15 @@ function resumeGame() {
 
 
 /**
- * Oeffnet das Optionsmenue im Start- oder Spielkontext.
- * @param {'start'|'ingame'} context Kontext, aus dem das Menue geoeffnet wird.
+ * Oeffnet das Optionsmenue im Start-, Spiel- oder Endkontext.
+ * @param {'start'|'ingame'|'ended'} context Kontext, aus dem das Menue geoeffnet wird.
  */
 function openOptions(context) {
     optionsContext = context;
-    setVisible('startBtnOpt', context === 'ingame');
-    setVisible('leaveBtnOpt', context === 'ingame');
+    setVisible('startBtnOpt', context !== 'start');
+    setVisible('leaveBtnOpt', context !== 'start');
     if (context === 'start') setStartButtonsVisible(false);
-    else pauseGame();
+    if (context === 'ingame') pauseGame();
     setVisible('optModal', true);
 }
 
@@ -168,7 +169,13 @@ function openOptions(context) {
 function closeOptions() {
     setVisible('optModal', false);
     if (optionsContext === 'start') setStartButtonsVisible(true);
-    else resumeGame();
+    if (optionsContext === 'ingame') resumeGame();
+}
+
+
+/** Oeffnet das Optionsmenue waehrend oder nach einer Partie. */
+function openGameOptions() {
+    openOptions(world &amp;&amp; world.isStopped ? 'ended' : 'ingame');
 }
 
 
@@ -251,9 +258,49 @@ function updateControlIcons() {
 }
 
 
-/** Blendet nach Spielende die Spielsteuerung aus. */
+/**
+ * Prueft, ob der Vollbildmodus aktiv ist (nativ oder als CSS-Ersatz).
+ * @returns {boolean} Vollbildstatus.
+ */
+function isFullscreen() {
+    return document.body.classList.contains('fullscreen');
+}
+
+
+/**
+ * Schaltet die Vollbild-Darstellung um und passt Buttons an.
+ * @param {boolean} active Gewuenschter Status.
+ */
+function setFullscreenClass(active) {
+    document.body.classList.toggle('fullscreen', active);
+    const icon = active ? 'fullscreen_exit.svg' : 'fullscreen.svg';
+    $('fullscreenBtn').querySelector('img').src = `./assets/img/icons/${icon}`;
+    $('fullscreenBtn').setAttribute('aria-label', active ? 'Vollbild beenden' : 'Vollbild');
+    $('fullscreenBtnStart').textContent = active ? 'Vollbild beenden' : 'Vollbild';
+}
+
+
+/**
+ * Startet oder beendet den Vollbildmodus. Ohne Fullscreen-API (z. B. iPhone)
+ * wird nur die CSS-Darstellung umgeschaltet.
+ */
+function toggleFullscreen() {
+    const root = document.documentElement;
+    if (document.fullscreenElement) return document.exitFullscreen().catch(() => setFullscreenClass(false));
+    if (isFullscreen()) return setFullscreenClass(false);
+    if (!document.fullscreenEnabled || !root.requestFullscreen) return setFullscreenClass(true);
+    root.requestFullscreen().catch(() => setFullscreenClass(true));
+}
+
+
+/** Gleicht die CSS-Klasse an, wenn der Browser das Vollbild selbst beendet (z. B. per Esc). */
+function syncFullscreenState() {
+    setFullscreenClass(Boolean(document.fullscreenElement));
+}
+
+
+/** Blendet nach Spielende die Touch-Steuerung aus; Menue- und Ton-Button bleiben sichtbar. */
 function handleGameEnded() {
-    setVisible('ingameOpt', false);
     setMobileControls(false);
 }
 
@@ -267,7 +314,8 @@ function bindMenuButtons() {
     $('leaveBtnOpt').addEventListener('click', goHome);
     $('audioBtn').addEventListener('click', toggleMute);
     $('optBtnStart').addEventListener('click', () => openOptions('start'));
-    $('optBtnOverlay').addEventListener('click', () => openOptions('ingame'));
+    $('optBtnOverlay').addEventListener('click', openGameOptions);
+    document.querySelectorAll('[data-fullscreen-toggle]').forEach(btn => btn.addEventListener('click', toggleFullscreen));
     bindDialogButtons();
 }
 
@@ -293,6 +341,7 @@ function initPage() {
     window.addEventListener('gameended', handleGameEnded);
     window.addEventListener('resize', syncGameOrientation);
     window.addEventListener('orientationchange', syncGameOrientation);
+    document.addEventListener('fullscreenchange', syncFullscreenState);
 }
 
 initPage();
@@ -306,13 +355,13 @@ initPage();
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$">$</a></li><li><a href="global.html#SUB_DIALOGS">SUB_DIALOGS</a></li><li><a href="global.html#bindDialogButtons">bindDialogButtons</a></li><li><a href="global.html#bindMenuButtons">bindMenuButtons</a></li><li><a href="global.html#bindTouchButton">bindTouchButton</a></li><li><a href="global.html#closeDialogOnOutsideClick">closeDialogOnOutsideClick</a></li><li><a href="global.html#closeOptions">closeOptions</a></li><li><a href="global.html#closeSubDialog">closeSubDialog</a></li><li><a href="global.html#createCollectibles">createCollectibles</a></li><li><a href="global.html#createEnemies">createEnemies</a></li><li><a href="global.html#goHome">goHome</a></li><li><a href="global.html#handleGameEnded">handleGameEnded</a></li><li><a href="global.html#initControls">initControls</a></li><li><a href="global.html#initPage">initPage</a></li><li><a href="global.html#isGameRunning">isGameRunning</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#isVisible">isVisible</a></li><li><a href="global.html#level1">level1</a></li><li><a href="global.html#openOptions">openOptions</a></li><li><a href="global.html#openSubDialog">openSubDialog</a></li><li><a href="global.html#pauseGame">pauseGame</a></li><li><a href="global.html#releaseAllKeys">releaseAllKeys</a></li><li><a href="global.html#resumeGame">resumeGame</a></li><li><a href="global.html#setKey">setKey</a></li><li><a href="global.html#setMobileControls">setMobileControls</a></li><li><a href="global.html#setStartButtonsVisible">setStartButtonsVisible</a></li><li><a href="global.html#setVisible">setVisible</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#stopCurrentGame">stopCurrentGame</a></li><li><a href="global.html#syncGameOrientation">syncGameOrientation</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#updateAudioIcon">updateAudioIcon</a></li><li><a href="global.html#updateControlIcons">updateControlIcons</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="CounterDisplay.html">CounterDisplay</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MoveableObject.html">MoveableObject</a></li><li><a href="MyAudio.html">MyAudio</a></li><li><a href="SalsaBottle.html">SalsaBottle</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$">$</a></li><li><a href="global.html#SUB_DIALOGS">SUB_DIALOGS</a></li><li><a href="global.html#bindDialogButtons">bindDialogButtons</a></li><li><a href="global.html#bindMenuButtons">bindMenuButtons</a></li><li><a href="global.html#bindTouchButton">bindTouchButton</a></li><li><a href="global.html#closeDialogOnOutsideClick">closeDialogOnOutsideClick</a></li><li><a href="global.html#closeOptions">closeOptions</a></li><li><a href="global.html#closeSubDialog">closeSubDialog</a></li><li><a href="global.html#createCollectibles">createCollectibles</a></li><li><a href="global.html#createEnemies">createEnemies</a></li><li><a href="global.html#goHome">goHome</a></li><li><a href="global.html#handleGameEnded">handleGameEnded</a></li><li><a href="global.html#initControls">initControls</a></li><li><a href="global.html#initPage">initPage</a></li><li><a href="global.html#isFullscreen">isFullscreen</a></li><li><a href="global.html#isGameRunning">isGameRunning</a></li><li><a href="global.html#isMobile">isMobile</a></li><li><a href="global.html#isVisible">isVisible</a></li><li><a href="global.html#level1">level1</a></li><li><a href="global.html#openGameOptions">openGameOptions</a></li><li><a href="global.html#openOptions">openOptions</a></li><li><a href="global.html#openSubDialog">openSubDialog</a></li><li><a href="global.html#pauseGame">pauseGame</a></li><li><a href="global.html#releaseAllKeys">releaseAllKeys</a></li><li><a href="global.html#resumeGame">resumeGame</a></li><li><a href="global.html#setFullscreenClass">setFullscreenClass</a></li><li><a href="global.html#setKey">setKey</a></li><li><a href="global.html#setMobileControls">setMobileControls</a></li><li><a href="global.html#setStartButtonsVisible">setStartButtonsVisible</a></li><li><a href="global.html#setVisible">setVisible</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#stopCurrentGame">stopCurrentGame</a></li><li><a href="global.html#syncFullscreenState">syncFullscreenState</a></li><li><a href="global.html#syncGameOrientation">syncGameOrientation</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#toggleMute">toggleMute</a></li><li><a href="global.html#updateAudioIcon">updateAudioIcon</a></li><li><a href="global.html#updateControlIcons">updateControlIcons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Nov 15 2026 04:47:02 GMT+0100 (Mitteleuropäische Normalzeit)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 16 2026 07:11:09 GMT+0100 (Mitteleuropäische Normalzeit)
 </footer>
 
 <script> prettyPrint(); </script>
