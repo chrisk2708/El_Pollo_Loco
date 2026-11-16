@@ -57,7 +57,6 @@ export class ImageHub {
 			"./assets/img/2_character_pepe/5_dead/D-54.png",
 			"./assets/img/2_character_pepe/5_dead/D-55.png",
 			"./assets/img/2_character_pepe/5_dead/D-56.png",
-			"./assets/img/2_character_pepe/5_dead/D-57.png",
 		],
 	};
 
@@ -151,14 +150,6 @@ export class ImageHub {
 
 	/** Statusleisten, Symbole und Rahmenbilder fuer HUD-Anzeigen. */
 	static STATUSBAR = {
-		coins: [
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png",
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/20.png",
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/40.png",
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/60.png",
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/80.png",
-            "./assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png",
-        ],
 		health: [
 			"./assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png",
 			"./assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png",
@@ -167,14 +158,6 @@ export class ImageHub {
 			"./assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png",
 			"./assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png",
 		],
-		bottles: [
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png",
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/20.png",
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/40.png",
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/60.png",
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/80.png",
-            "./assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png",
-        ],
 		endBoss: [
             "./assets/img/7_statusbars/2_statusbar_endboss/orange/orange0.png",
             "./assets/img/7_statusbars/2_statusbar_endboss/orange/orange20.png",
@@ -188,6 +171,20 @@ export class ImageHub {
 			health: "./assets/img/7_statusbars/3_icons/icon_health.png",
 			bottle: "./assets/img/7_statusbars/3_icons/icon_salsa_bottle.png",
 			healthEndboss: "./assets/img/7_statusbars/3_icons/icon_health_endboss.png",
+		},
+		counters: {
+			bottle: {
+				path: "./assets/img/6_salsa_bottle/salsa_bottle.png",
+				crop: { sx: 162, sy: 62, sw: 76, sh: 286 },
+				width: 12,
+				height: 44,
+			},
+			coin: {
+				path: "./assets/img/8_coin/coin_1.png",
+				crop: { sx: 104, sy: 105, sw: 92, sh: 91 },
+				width: 36,
+				height: 36,
+			},
 		},
 		barElements: {
 			empty: "./assets/img/7_statusbars/4_bar_elements/statusbar_empty.png",

@@ -1,0 +1,33 @@
+/* Vollbildmodus: Footer ausblenden, Spielflaeche maximal gross */
+body.fullscreen {
+    padding: 0;
+}
+
+body.fullscreen #footer {
+    display: none !important;
+}
+
+body.fullscreen .main-content {
+    width: min(100vw, 200dvh);
+    max-width: none;
+    max-height: none;
+}
+
+body.fullscreen #canvas {
+    border: 0;
+    border-radius: 0;
+}
+
+/* Spielerklaerung: Text beginnt unterhalb des Schliessen-X */
+#gameDescription {
+    padding-top: 44px;
+}
+
+#gameDescription p {
+    font-size: 16px;
+}
+
+/* Optionsmenue: alle Menue-Buttons gleich breit */
+#optModal > button:not(.close-x) {
+    width: min(240px, 100%);
+}

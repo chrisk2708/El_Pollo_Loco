@@ -7,6 +7,14 @@ let world = null;
 let optionsContext = 'start';
 let pausedForPortrait = false;
 
+/** Zuordnung der Menue-Buttons zu ihren Unterdialogen. */
+const SUB_DIALOGS = {
+    controlDescriptionBtn: 'controlDescription',
+    gameDescriptionBtn: 'gameDescription',
+    imprintBtn: 'imprintDialog',
+    privacyBtn: 'privacyDialog'
+};
+
 /**
  * Kurzschreibweise fuer document.getElementById.
  * @param {string} id Element-ID.
@@ -94,6 +102,7 @@ function goHome() {
 function setStartButtonsVisible(visible) {
     setVisible('startBtn', visible);
     setVisible('optBtnStart', visible);
+    setVisible('fullscreenBtnStart', visible);
 }
 
 
@@ -115,14 +124,15 @@ function resumeGame() {
 
 
 /**
- * Oeffnet das Optionsmenue im Start- oder Spielkontext.
- * @param {'start'|'ingame'} context Kontext, aus dem das Menue geoeffnet wird.
+ * Oeffnet das Optionsmenue im Start-, Spiel- oder Endkontext.
+ * @param {'start'|'ingame'|'ended'} context Kontext, aus dem das Menue geoeffnet wird.
  */
 function openOptions(context) {
     optionsContext = context;
-    setVisible('startBtnOpt', context === 'ingame');
+    setVisible('startBtnOpt', context !== 'start');
+    setVisible('leaveBtnOpt', context !== 'start');
     if (context === 'start') setStartButtonsVisible(false);
-    else pauseGame();
+    if (context === 'ingame') pauseGame();
     setVisible('optModal', true);
 }
 
@@ -131,7 +141,13 @@ function openOptions(context) {
 function closeOptions() {
     setVisible('optModal', false);
     if (optionsContext === 'start') setStartButtonsVisible(true);
-    else resumeGame();
+    if (optionsContext === 'ingame') resumeGame();
+}
+
+
+/** Oeffnet das Optionsmenue waehrend oder nach einer Partie. */
+function openGameOptions() {
+    openOptions(world && world.isStopped ? 'ended' : 'ingame');
 }
 
 
@@ -160,7 +176,7 @@ function closeSubDialog(id) {
  * @param {PointerEvent} event Zeigerereignis.
  */
 function closeDialogOnOutsideClick(event) {
-    const openSub = ['controlDescription', 'gameDescription'].find(isVisible);
+    const openSub = Object.values(SUB_DIALOGS).find(isVisible);
     if (openSub && !$(openSub).contains(event.target)) return closeSubDialog(openSub);
     if (isVisible('optModal') && !$('optModal').contains(event.target)) closeOptions();
 }
@@ -214,9 +230,49 @@ function updateControlIcons() {
 }
 
 
-/** Blendet nach Spielende die Spielsteuerung aus. */
+/**
+ * Prueft, ob der Vollbildmodus aktiv ist (nativ oder als CSS-Ersatz).
+ * @returns {boolean} Vollbildstatus.
+ */
+function isFullscreen() {
+    return document.body.classList.contains('fullscreen');
+}
+
+
+/**
+ * Schaltet die Vollbild-Darstellung um und passt Buttons an.
+ * @param {boolean} active Gewuenschter Status.
+ */
+function setFullscreenClass(active) {
+    document.body.classList.toggle('fullscreen', active);
+    const icon = active ? 'fullscreen_exit.svg' : 'fullscreen.svg';
+    $('fullscreenBtn').querySelector('img').src = `./assets/img/icons/${icon}`;
+    $('fullscreenBtn').setAttribute('aria-label', active ? 'Vollbild beenden' : 'Vollbild');
+    $('fullscreenBtnStart').textContent = active ? 'Vollbild beenden' : 'Vollbild';
+}
+
+
+/**
+ * Startet oder beendet den Vollbildmodus. Ohne Fullscreen-API (z. B. iPhone)
+ * wird nur die CSS-Darstellung umgeschaltet.
+ */
+function toggleFullscreen() {
+    const root = document.documentElement;
+    if (document.fullscreenElement) return document.exitFullscreen().catch(() => setFullscreenClass(false));
+    if (isFullscreen()) return setFullscreenClass(false);
+    if (!document.fullscreenEnabled || !root.requestFullscreen) return setFullscreenClass(true);
+    root.requestFullscreen().catch(() => setFullscreenClass(true));
+}
+
+
+/** Gleicht die CSS-Klasse an, wenn der Browser das Vollbild selbst beendet (z. B. per Esc). */
+function syncFullscreenState() {
+    setFullscreenClass(Boolean(document.fullscreenElement));
+}
+
+
+/** Blendet nach Spielende die Touch-Steuerung aus; Menue- und Ton-Button bleiben sichtbar. */
 function handleGameEnded() {
-    setVisible('ingameOpt', false);
     setMobileControls(false);
 }
 
@@ -227,12 +283,20 @@ function bindMenuButtons() {
     $('restartBtn').addEventListener('click', startGame);
     $('startBtnOpt').addEventListener('click', startGame);
     $('homeBtn').addEventListener('click', goHome);
+    $('leaveBtnOpt').addEventListener('click', goHome);
     $('audioBtn').addEventListener('click', toggleMute);
     $('optBtnStart').addEventListener('click', () => openOptions('start'));
-    $('optBtnOverlay').addEventListener('click', () => openOptions('ingame'));
+    $('optBtnOverlay').addEventListener('click', openGameOptions);
+    document.querySelectorAll('[data-fullscreen-toggle]').forEach(btn => btn.addEventListener('click', toggleFullscreen));
+    bindDialogButtons();
+}
+
+
+/** Registriert die Buttons zum Oeffnen und Schliessen der Unterdialoge. */
+function bindDialogButtons() {
     document.querySelectorAll('[data-close-options]').forEach(btn => btn.addEventListener('click', closeOptions));
-    $('controlDescriptionBtn').addEventListener('click', () => openSubDialog('controlDescription'));
-    $('gameDescriptionBtn').addEventListener('click', () => openSubDialog('gameDescription'));
+    Object.entries(SUB_DIALOGS).forEach(([btnId, dialogId]) =>
+        $(btnId).addEventListener('click', () => openSubDialog(dialogId)));
     document.querySelectorAll('[data-close-dialog]').forEach(btn => btn.addEventListener('click',
         () => closeSubDialog(btn.dataset.closeDialog)));
 }
@@ -249,6 +313,7 @@ function initPage() {
     window.addEventListener('gameended', handleGameEnded);
     window.addEventListener('resize', syncGameOrientation);
     window.addEventListener('orientationchange', syncGameOrientation);
+    document.addEventListener('fullscreenchange', syncFullscreenState);
 }
 
 initPage();

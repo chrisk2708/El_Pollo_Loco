@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./styles/standard.css">
     <link rel="stylesheet" href="./styles/font.css">
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./styles/responsive.css">
+    <link rel="stylesheet" href="./styles/imprint.css">
+    <link rel="stylesheet" href="./styles/extras.css">
     <title>El Pollo Loco</title>
     <script type="module" src="js/game.js"></script>
 </head>
@@ -17,19 +20,23 @@
         <div id="startScreen" class="startscreen">
             <button id="startBtn">Spiel starten</button>
             <button id="optBtnStart">Optionen</button>
+            <button id="fullscreenBtnStart" data-fullscreen-toggle>Vollbild</button>
         </div>
 
         <div id="ingameOpt" class="ingame-options d-none">
             <button id="optBtnOverlay" aria-label="Optionen"><img src="./assets/img/icons/settings.png" alt="Optionen"></button>
             <button id="audioBtn" aria-label="Ton an/aus"><img src="./assets/img/icons/stumm.png" alt="Ton an/aus"></button>
+            <button id="fullscreenBtn" data-fullscreen-toggle aria-label="Vollbild"><img src="./assets/img/icons/fullscreen.svg" alt="Vollbild"></button>
         </div>
 
         <div id="optModal" class="optModal d-none">
             <button class="close-x" data-close-options aria-label="Schließen">X</button>
             <button id="startBtnOpt">Neu Starten</button>
+            <button id="leaveBtnOpt">Spiel verlassen</button>
             <button id="controlDescriptionBtn">Steuerung</button>
             <button id="gameDescriptionBtn">Spielerklärung</button>
-            <a class="button-link" href="./imprint.html" target="_blank">Impressum</a>
+            <button id="imprintBtn">Impressum</button>
+            <button id="privacyBtn">Datenschutz</button>
             <button class="back-btn" data-close-options>zurück</button>
         </div>
 
@@ -45,11 +52,11 @@
 
         <div id="mobileButtons" class="mobileButtons d-none">
             <div class="left-mobileButtons">
-                <button id="walkLeftButton" aria-label="Links"><img src="./assets/img/icons/mobile_left.png" alt="" draggable="false"></button>
-                <button id="walkRightButton" aria-label="Rechts"><img src="./assets/img/icons/mobile_right.png" alt="" draggable="false"></button>
+                <button id="walkLeftButton" aria-label="Links"><img src="./assets/img/icons/mobile_arrow_left.svg" alt="" draggable="false"></button>
+                <button id="walkRightButton" aria-label="Rechts"><img src="./assets/img/icons/mobile_arrow_right.svg" alt="" draggable="false"></button>
             </div>
             <div class="right-mobileButtons">
-                <button id="jumpButton" aria-label="Springen"><img src="./assets/img/icons/mobile_jump.png" alt="" draggable="false"></button>
+                <button id="jumpButton" aria-label="Springen"><img src="./assets/img/icons/mobile_arrow_up.svg" alt="" draggable="false"></button>
                 <button id="throwButton" aria-label="Flasche werfen"><img src="./assets/img/icons/mobile_throw.png" alt="" draggable="false"></button>
             </div>
         </div>
@@ -82,11 +89,50 @@
             </p>
             <button class="back-btn" data-close-dialog="gameDescription">zurück</button>
         </div>
+
+        <div id="imprintDialog" class="optModal controlDescription imprint-dialog d-none">
+            <button class="close-x" data-close-dialog="imprintDialog" aria-label="Schließen">X</button>
+            <h2>Impressum</h2>
+            <p>Angaben gemäß § 5 DDG:<br>Max Muster<br>Musterstraße 1<br>01234 Musterstadt</p>
+            <p>Kontakt: max@example.com</p>
+            <p>Dieses Spiel ist ein nicht-kommerzielles Lernprojekt im Rahmen der Weiterbildung bei der
+                Developer Akademie GmbH.</p>
+            <button class="back-btn" data-close-dialog="imprintDialog">zurück</button>
+        </div>
+
+        <div id="privacyDialog" class="optModal controlDescription imprint-dialog d-none">
+            <button class="close-x" data-close-dialog="privacyDialog" aria-label="Schließen">X</button>
+            <h2>Datenschutzerklärung</h2>
+            <h3>Verantwortlicher</h3>
+            <p>Max Muster, Musterstraße 1,<br>01234 Musterstadt<br>E-Mail: max@example.com</p>
+            <h3>Hosting und Server-Logfiles</h3>
+            <p>Diese Website wird bei [Name des Hosting-Anbieters] gehostet. Beim Aufruf speichert der Server
+                automatisch technische Daten wie IP-Adresse, Datum und Uhrzeit, aufgerufene Datei, Browser und
+                Betriebssystem. Diese Daten werden nur zur sicheren Bereitstellung der Website verwendet und nicht mit
+                anderen Daten zusammengeführt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+            <h3>Lokaler Speicher im Browser</h3>
+            <p>Das Spiel speichert ausschließlich die Einstellung „Ton an/aus“ im Local Storage deines Browsers.
+                Diese Information verlässt dein Gerät nicht und kann jederzeit über die Browsereinstellungen gelöscht
+                werden.</p>
+            <h3>Keine Cookies, kein Tracking</h3>
+            <p>Es werden keine Cookies, Analyse- oder Werbedienste eingesetzt. Schriftarten und alle Spielinhalte
+                werden lokal von diesem Server geladen.</p>
+            <h3>Externe Links</h3>
+            <p>Der Link zu GitHub führt auf eine externe Website. Erst beim Anklicken werden Daten an GitHub
+                übertragen; dort gilt die Datenschutzerklärung von GitHub.</p>
+            <h3>Deine Rechte</h3>
+            <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Widerspruch
+                und Datenübertragbarkeit (Art. 15–21 DSGVO) sowie das Recht auf Beschwerde bei einer
+                Datenschutz-Aufsichtsbehörde.</p>
+            <p>Stand: November 2026</p>
+            <button class="back-btn" data-close-dialog="privacyDialog">zurück</button>
+        </div>
     </section>
     <footer id="footer">
         <div>&copy; 2026 El Pollo Loco</div>
         <div>
             <div><a href="./imprint.html">Impressum</a></div>
+            <div><a href="./privacy.html">Datenschutz</a></div>
             <div><a href="https://github.com/chrisk2708/El_Pollo_Loco" target="_blank">GitHub</a></div>
         </div>
     </footer>

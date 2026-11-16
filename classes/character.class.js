@@ -16,6 +16,7 @@ export class Character extends MoveableObject {
     isLongIdle = false;
     isWalkingPlaying = false;
     hasPlayedDeathSound = false;
+    hasDeathJumped = false;
     isJumpSoundPlayed = false;
 
     offset = {
@@ -48,8 +49,25 @@ export class Character extends MoveableObject {
         if (!this.isDead()) {
             this.handleHorizontalMovement();
             this.handleJump();
+        } else {
+            this.startDeathJump();
         }
         this.updateCamera();
+    }
+
+    /** Laesst den Charakter beim Tod einmal nach oben springen; danach faellt er durch den Boden. */
+    startDeathJump() {
+        if (this.hasDeathJumped) return;
+        this.hasDeathJumped = true;
+        this.speedY = 20;
+    }
+
+    /**
+     * Ein toter Charakter gilt immer als in der Luft, damit die Gravitation ihn aus dem Bild fallen laesst.
+     * @returns {boolean} Ob der Charakter in der Luft ist.
+     */
+    isAboveGround() {
+        return this.isDead() || super.isAboveGround();
     }
 
     /** Laesst die Kamera dem Charakter folgen, ohne ueber die Levelgrenzen hinauszuscrollen. */
